@@ -1,0 +1,32 @@
+Engenheiro de Software Backend — Fintech Pagali
+
+A Pagali é uma fintech em crescimento acelerado que processa milhões de transações por mês. Buscamos um Engenheiro Backend para reforçar o time de plataforma.
+
+Responsabilidades:
+- Desenvolver e manter APIs REST de alta performance
+- Integrar com provedores de pagamento e bancos
+- Garantir segurança e conformidade dos dados financeiros
+- Participar de code reviews e definição de arquitetura
+- Colaborar com times de produto e dados
+
+Requisitos obrigatórios:
+- 3+ anos de experiência com desenvolvimento backend
+- Experiência sólida com Python (Django ou FastAPI)
+- Conhecimento de bancos de dados relacionais (PostgreSQL)
+- Familiaridade com Docker e ambientes cloud (AWS ou GCP)
+- Experiência com APIs REST e integrações com terceiros
+
+Diferenciais:
+- Experiência com sistemas de pagamento
+- Conhecimento de filas e processamento assíncrono (Celery, RabbitMQ)
+- Experiência com Redis e estratégias de cache
+- Vivência em ambiente de alta disponibilidade
+
+Benefícios:
+- Salário competitivo + stock options
+- 100% remoto
+- Plano de saúde Bradesco
+- R$500/mês para home office
+
+Local: Remoto — Brasil
+Regime: CLT ou PJ
