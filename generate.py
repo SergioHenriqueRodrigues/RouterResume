@@ -332,6 +332,21 @@ Never mix languages.
 4. Quantify achievements with numbers whenever possible
 5. Max 1-2 pages
 6. Reply ONLY with the resume — no explanations, no code fences, no commentary
+
+=== SKILLS SECTION — STRICT RULES ===
+List ONLY concrete, specific, verifiable technical skills:
+  ✅ INCLUDE: programming languages, frameworks, databases, tools, platforms, certifications
+     Examples: Python, Django, PostgreSQL, Docker, AWS, Git, React, Kubernetes
+
+  ❌ NEVER include any of the following — they are obvious, generic or not real skills:
+     - Soft skills: "teamwork", "communication", "leadership", "proactivity", "organization"
+     - Generic responsibilities: "code review", "software architecture", "third-party integrations",
+       "data security", "compliance", "agile methodology", "scrum"
+     - Languages spoken: "English", "Portuguese", "Spanish", "native", "intermediate", "fluent"
+       (spoken languages do NOT belong in the skills section)
+     - Vague tools: "Microsoft Office", "Google Docs", "email", "Slack"
+
+If a skill could appear on ANY professional's resume regardless of their technical area, do NOT include it.
 """
 
 # ── API ────────────────────────────────────────────────────────────────────────
@@ -407,31 +422,31 @@ def save_docx(text, base_name, lang, ui):
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             run = p.add_run(line[len(name_lbl)+1:].strip())
             run.bold = True; run.font.size = Pt(18)
-            run.font.color.rgb = RGBColor(0x1A, 0x1A, 0x2E)
+            run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
         elif line.startswith(f"{contact_lbl}:"):
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             run = p.add_run(line[len(contact_lbl)+1:].strip())
             run.font.size = Pt(9)
-            run.font.color.rgb = RGBColor(0x55, 0x55, 0x55)
+            run.font.color.rgb = RGBColor(0x44, 0x44, 0x44)
             doc.add_paragraph()
         elif line.startswith("## "):
             p = doc.add_paragraph()
             run = p.add_run(line[3:].strip().upper())
             run.bold = True; run.font.size = Pt(10)
-            run.font.color.rgb = RGBColor(0x2E, 0x86, 0xAB)
+            run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
             p.paragraph_format.space_before = Pt(10)
             p.paragraph_format.space_after  = Pt(2)
             p2 = doc.add_paragraph()
             run2 = p2.add_run("─" * 60)
             run2.font.size = Pt(7)
-            run2.font.color.rgb = RGBColor(0x2E, 0x86, 0xAB)
+            run2.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
             p2.paragraph_format.space_after = Pt(4)
         elif line.startswith("### "):
             p = doc.add_paragraph()
             run = p.add_run(line[4:].strip())
             run.bold = True; run.font.size = Pt(10)
-            run.font.color.rgb = RGBColor(0x1A, 0x1A, 0x2E)
+            run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
             p.paragraph_format.space_before = Pt(6)
             p.paragraph_format.space_after  = Pt(1)
         elif line.startswith("- ") or line.startswith("* "):
@@ -465,9 +480,9 @@ def save_pdf(text, base_name, lang, ui):
         topMargin=2*cm, bottomMargin=2*cm)
 
     styles = getSampleStyleSheet()
-    color_p = colors.HexColor("#2E86AB")
-    color_t = colors.HexColor("#1A1A2E")
-    color_s = colors.HexColor("#555555")
+    color_p = colors.HexColor("#000000")
+    color_t = colors.HexColor("#000000")
+    color_s = colors.HexColor("#444444")
     s_name    = ParagraphStyle("Name",    parent=styles["Title"],    fontSize=20, textColor=color_t, spaceAfter=2,   alignment=1, fontName="Helvetica-Bold")
     s_contact = ParagraphStyle("Contact", parent=styles["Normal"],   fontSize=9,  textColor=color_s, spaceAfter=12,  alignment=1, fontName="Helvetica")
     s_section = ParagraphStyle("Section", parent=styles["Heading2"], fontSize=10, textColor=color_p, spaceBefore=12, spaceAfter=2, fontName="Helvetica-Bold")
