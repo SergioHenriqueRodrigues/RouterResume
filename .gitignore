@@ -1,1 +1,25 @@
-my_data.md
+# Output files
+output/
+
+# Personal data
+data.md
+old_resumes/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Environment files (just in case)
+.env
+*.env
