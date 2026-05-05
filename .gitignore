@@ -4,6 +4,7 @@ output/
 # Personal data
 data.md
 old_resumes/
+my_data.md
 
 # Python
 __pycache__/
