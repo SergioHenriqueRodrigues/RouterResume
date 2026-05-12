@@ -73,4 +73,4 @@ Liderei equipe de 3 devs por 8 meses
 
 Gosto de automatizar coisas repetitivas, já fiz scripts internos que economizaram horas de trabalho manual da equipe.
 Prefiro trabalho remoto mas tenho experiência com presencial e híbrido.
-Disponibilidade imediata.
+Disponibilidade imediata.a
