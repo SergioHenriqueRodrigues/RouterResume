@@ -33,6 +33,9 @@ UI_STRINGS = {
         "generate_btn": "🚀 Gerar currículo",
         "no_job_error": "Por favor, cole uma descrição de vaga antes.",
         "no_api_error": "OPENROUTER_API_KEY não configurada. Defina no ambiente e reinicie.",
+        "no_data_error": "⚠️ Preencha seus **Dados do Perfil** (aba 👤) antes de gerar um currículo.",
+        "no_resumes_error": "⚠️ Adicione ao menos um **Currículo Antigo** (aba 📁) para melhorar os resultados.",
+        "no_data_and_resumes_error": "⚠️ Preencha seus **Dados do Perfil** (aba 👤) e adicione ao menos um **Currículo Antigo** (aba 📁) antes de gerar.",
         "status_reading": "📄 Lendo dados do perfil... ({chars:,} caracteres)",
         "status_resumes": "📁 Currículos antigos: {n} arquivo(s)",
         "status_calling": "🤖 Chamando OpenRouter ({model})...",
@@ -82,6 +85,9 @@ UI_STRINGS = {
         "generate_btn": "🚀 Generate resume",
         "no_job_error": "Please paste a job description first.",
         "no_api_error": "OPENROUTER_API_KEY not set. Set it in your environment and restart.",
+        "no_data_error": "⚠️ Fill in your **Profile Data** (👤 tab) before generating a resume.",
+        "no_resumes_error": "⚠️ Add at least one **Old Resume** (📁 tab) to improve the results.",
+        "no_data_and_resumes_error": "⚠️ Fill in your **Profile Data** (👤 tab) and add at least one **Old Resume** (📁 tab) before generating.",
         "status_reading": "📄 Reading profile data... ({chars:,} chars)",
         "status_resumes": "📁 Old resumes: {n} file(s)",
         "status_calling": "🤖 Calling OpenRouter ({model})...",
@@ -131,6 +137,9 @@ UI_STRINGS = {
         "generate_btn": "🚀 Generar currículum",
         "no_job_error": "Por favor, pega una descripción de trabajo primero.",
         "no_api_error": "OPENROUTER_API_KEY no configurada. Configúrala en tu entorno y reinicia.",
+        "no_data_error": "⚠️ Completa tus **Datos del Perfil** (pestaña 👤) antes de generar un currículum.",
+        "no_resumes_error": "⚠️ Agrega al menos un **CV Anterior** (pestaña 📁) para mejorar los resultados.",
+        "no_data_and_resumes_error": "⚠️ Completa tus **Datos del Perfil** (pestaña 👤) y agrega al menos un **CV Anterior** (pestaña 📁) antes de generar.",
         "status_reading": "📄 Leyendo datos del perfil... ({chars:,} caracteres)",
         "status_resumes": "📁 CV anteriores: {n} archivo(s)",
         "status_calling": "🤖 Llamando a OpenRouter ({model})...",
@@ -235,63 +244,119 @@ THEME_CSS = {
 
 st.markdown(f"<style>{THEME_CSS[ui_theme]}</style>", unsafe_allow_html=True)
 
-st.markdown("""
+st.markdown(f"""
 <style>
-  /* Hide streamlit chrome — method: zero out size/opacity, not visibility/display */
-  #MainMenu { display: none !important; }
-  footer { display: none !important; }
+  /* Hide streamlit chrome */
+  #MainMenu {{ display: none !important; }}
+  footer {{ display: none !important; }}
 
-  /* Header: keep it in the DOM and interactable, just make it invisible */
-  header { background: transparent !important; }
-  header > div:first-child { opacity: 0 !important; pointer-events: none !important; }
+  /* Header: transparent background */
+  header {{ background: transparent !important; }}
 
-  /* Sidebar toggle buttons — always on top and clickable */
+  /* Hide header inner content except sidebar-related buttons */
+  header > div:first-child > *:not([data-testid="stSidebarCollapsedControl"]):not([data-testid="collapsedControl"]) {{
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }}
+
+  /* ── Sidebar toggle buttons — always visible ── */
+  [data-testid="stSidebarCollapseButton"],
+  [data-testid="stSidebarCollapseButton"] button,
   [data-testid="stSidebarCollapsedControl"],
+  [data-testid="stSidebarCollapsedControl"] button,
   [data-testid="collapsedControl"],
-  button[kind="header"],
-  section[data-testid="stSidebar"] ~ div button {
+  [data-testid="collapsedControl"] button,
+  button[aria-label="Open sidebar"],
+  button[aria-label="Abrir barra lateral"],
+  button[aria-label="Close sidebar"],
+  button[aria-label="Fechar barra lateral"],
+  section[data-testid="stSidebar"] + div button,
+  .st-emotion-cache-1dp5vir,
+  .st-emotion-cache-czk5ss {{
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
     z-index: 999999 !important;
-  }
+    display: flex !important;
+  }}
+
+  /* Style the floating expand button */
+  [data-testid="stSidebarCollapsedControl"],
+  [data-testid="collapsedControl"] {{
+    position: fixed !important;
+    top: 0.5rem !important;
+    left: 0 !important;
+    background: #5B8EF5 !important;
+    border: none !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 12px rgba(0,0,0,0.25) !important;
+    padding: 6px 8px 6px 4px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }}
+
+  [data-testid="stSidebarCollapsedControl"] button,
+  [data-testid="collapsedControl"] button {{
+    color: #ffffff !important;
+    background: transparent !important;
+    border: none !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }}
+
+  [data-testid="stSidebarCollapsedControl"] button svg,
+  [data-testid="collapsedControl"] button svg {{
+    stroke: #ffffff !important;
+    fill: #ffffff !important;
+    color: #ffffff !important;
+  }}
+
+  /* Sidebar top lang/theme controls — compact, no label space */
+  [data-testid="stSidebar"] [data-testid="stVerticalBlock"]:first-child .stColumns {{
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }}
+  [data-testid="stSidebar"] [data-testid="stVerticalBlock"]:first-child .stSelectbox > div > div {{
+    min-height: 32px !important;
+    font-size: 12px !important;
+  }}
 
   /* Clean typography */
-  h1 { font-weight: 600 !important; letter-spacing: -0.5px !important; }
-  h3 { font-weight: 500 !important; color: var(--text-muted) !important; margin-bottom: 0 !important; }
+  h1 {{ font-weight: 600 !important; letter-spacing: -0.5px !important; }}
+  h3 {{ font-weight: 500 !important; color: var(--text-muted) !important; margin-bottom: 0 !important; }}
 
   /* Sidebar */
-  [data-testid="stSidebar"] { background: var(--bg) !important; border-right: 1px solid var(--border) !important; }
-  [data-testid="stSidebar"] h1 { font-size: 18px !important; color: var(--text) !important; }
+  [data-testid="stSidebar"] {{ background: var(--bg) !important; border-right: 1px solid var(--border) !important; }}
+  [data-testid="stSidebar"] h1 {{ font-size: 18px !important; color: var(--text) !important; }}
 
   /* Sidebar labels */
   [data-testid="stSidebar"] label,
   [data-testid="stSidebar"] .stSelectbox label,
-  [data-testid="stSidebar"] .stTextInput label {
+  [data-testid="stSidebar"] .stTextInput label {{
     color: var(--text) !important;
     font-weight: 600 !important;
     font-size: 13px !important;
-  }
+  }}
 
   /* Status badges */
-  .status-ok   { background: var(--status-ok-bg); border: 1px solid var(--status-ok-border); color: var(--status-ok-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
-  .status-warn { background: var(--status-warn-bg); border: 1px solid var(--status-warn-border); color: var(--status-warn-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
+  .status-ok   {{ background: var(--status-ok-bg); border: 1px solid var(--status-ok-border); color: var(--status-ok-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }}
+  .status-warn {{ background: var(--status-warn-bg); border: 1px solid var(--status-warn-border); color: var(--status-warn-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }}
 
   /* File cards */
-  .file-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-  .file-name { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text); }
-  .file-size { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .file-card {{ background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }}
+  .file-name {{ font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text); }}
+  .file-size {{ font-size: 11px; color: var(--text-muted); margin-top: 2px; }}
 
   /* Preview box */
-  .preview-box { background: var(--preview-bg); border: 1px solid var(--preview-border); border-radius: 8px; padding: 20px; font-family: monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; max-height: 500px; overflow-y: auto; color: var(--text); }
+  .preview-box {{ background: var(--preview-bg); border: 1px solid var(--preview-border); border-radius: 8px; padding: 20px; font-family: monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; max-height: 500px; overflow-y: auto; color: var(--text); }}
 
   /* Stbutton tweaks */
-  .stButton > button { border-radius: 6px !important; font-weight: 500 !important; }
-  div[data-testid="stDownloadButton"] > button { width: 100% !important; }
+  .stButton > button {{ border-radius: 6px !important; font-weight: 500 !important; }}
+  div[data-testid="stDownloadButton"] > button {{ width: 100% !important; }}
 
-  /* Delete button — red, compact, vertically centered with card */
-  .del-btn-wrap { display: flex; align-items: center; height: 100%; padding-bottom: 8px; }
-  .del-btn-wrap .stButton > button {
+  /* Delete button */
+  .del-btn-wrap {{ display: flex; align-items: center; height: 100%; padding-bottom: 8px; }}
+  .del-btn-wrap .stButton > button {{
     background: #DC2626 !important;
     color: #fff !important;
     border: none !important;
@@ -302,58 +367,77 @@ st.markdown("""
     height: 40px !important;
     min-height: unset !important;
     width: 100% !important;
-  }
-  .del-btn-wrap .stButton > button:hover { background: #B91C1C !important; }
+  }}
+  .del-btn-wrap .stButton > button:hover {{ background: #B91C1C !important; }}
 
-  /* Sidebar options — 4px gap between elements */
+  /* Sidebar options — tight gap */
   [data-testid="stSidebar"] .stSelectbox,
   [data-testid="stSidebar"] .stTextInput,
-  [data-testid="stSidebar"] .stMarkdown p { margin-bottom: 4px !important; }
-  [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { gap: 4px !important; }
-  [data-testid="stSidebar"] .block-container { gap: 4px !important; }
+  [data-testid="stSidebar"] .stMarkdown p {{ margin-bottom: 0px !important; }}
+  [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div {{ gap: 0px !important; }}
+  [data-testid="stSidebar"] .block-container {{ gap: 0px !important; }}
 
   /* Model hint link */
-  .model-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
-  .model-hint a { color: #5B8EF5; text-decoration: none; }
-  .model-hint a:hover { text-decoration: underline; }
-
-  /* Sidebar top controls — fixed strip above the title */
-  .sidebar-top-controls {
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  /* Make the lang selectbox compact */
-  .sidebar-top-controls [data-testid="stSelectbox"] {
-    flex: 1;
-  }
-  .sidebar-top-controls [data-testid="stSelectbox"] > div:first-child {
-    font-size: 12px !important;
-    min-height: unset !important;
-  }
-  /* Toggle label inline */
-  .sidebar-top-controls [data-testid="stToggle"] {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-  }
-  .sidebar-top-controls [data-testid="stToggle"] label {
-    font-size: 12px !important;
-    color: var(--text-muted) !important;
-    font-weight: 500 !important;
-  }
+  .model-hint {{ font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }}
+  .model-hint a {{ color: #5B8EF5; text-decoration: none; }}
+  .model-hint a:hover {{ text-decoration: underline; }}
 </style>
+
+
+<script>
+(function() {{
+  // Keep sidebar toggle always visible
+  function fixSidebarBtn() {{
+    var ids = ['stSidebarCollapsedControl','collapsedControl','stSidebarCollapseButton'];
+    ids.forEach(function(id) {{
+      var el = document.querySelector('[data-testid="' + id + '"]');
+      if (el) {{
+        el.style.setProperty('opacity','1','important');
+        el.style.setProperty('visibility','visible','important');
+        el.style.setProperty('pointer-events','auto','important');
+        el.style.setProperty('display','flex','important');
+        el.style.setProperty('z-index','999999','important');
+        el.style.setProperty('background','#5B8EF5','important');
+        el.style.setProperty('border-radius','0 8px 8px 0','important');
+        el.style.setProperty('min-width','36px','important');
+        el.style.setProperty('min-height','36px','important');
+        el.style.setProperty('padding','6px 8px 6px 4px','important');
+        var btn = el.querySelector('button');
+        if (btn) {{
+          btn.style.setProperty('opacity','1','important');
+          btn.style.setProperty('visibility','visible','important');
+          btn.style.setProperty('pointer-events','auto','important');
+          btn.style.setProperty('color','#ffffff','important');
+        }}
+        var svg = el.querySelector('svg');
+        if (svg) {{
+          svg.style.setProperty('stroke','#ffffff','important');
+          svg.style.setProperty('color','#ffffff','important');
+        }}
+      }}
+    }});
+    document.querySelectorAll('button[aria-label]').forEach(function(btn) {{
+      var lbl = (btn.getAttribute('aria-label') || '').toLowerCase();
+      if (lbl.indexOf('sidebar') !== -1 || lbl.indexOf('barra') !== -1) {{
+        btn.style.setProperty('opacity','1','important');
+        btn.style.setProperty('visibility','visible','important');
+        btn.style.setProperty('pointer-events','auto','important');
+        btn.style.setProperty('z-index','999999','important');
+      }}
+    }});
+  }}
+  fixSidebarBtn();
+  new MutationObserver(fixSidebarBtn).observe(document.documentElement, {{childList:true, subtree:true}});
+}})();
+</script>
 """, unsafe_allow_html=True)
 
 # ── sidebar ────────────────────────────────────────────────────────────────────
 
 with st.sidebar:
-    # ── language + theme — above the title ────────────────────────────────────
-    st.markdown('<div class="sidebar-top-controls">', unsafe_allow_html=True)
-    ctrl_c1, ctrl_c2 = st.columns([3, 2])
-    with ctrl_c1:
+    # ── lang + theme selects — topo do sidebar ────────────────────────────────
+    col_lang, col_theme = st.columns([3, 2])
+    with col_lang:
         ui_lang_options = {"pt": "🇧🇷 Português", "en": "🇺🇸 English", "es": "🇪🇸 Español"}
         selected_lang = st.selectbox(
             "lang",
@@ -366,13 +450,19 @@ with st.sidebar:
         if selected_lang != ui_lang:
             st.session_state["ui_lang"] = selected_lang
             st.rerun()
-    with ctrl_c2:
-        dark_on = ui_theme == "dark"
-        new_dark = st.toggle("🌙", value=dark_on, key="theme_toggle")
-        if new_dark != dark_on:
-            st.session_state["ui_theme"] = "dark" if new_dark else "light"
+    with col_theme:
+        theme_options = {"system": "🖥️", "light": "☀️", "dark": "🌙"}
+        selected_theme = st.selectbox(
+            "theme",
+            options=list(theme_options.keys()),
+            format_func=lambda k: theme_options[k],
+            index=list(theme_options.keys()).index(ui_theme),
+            label_visibility="collapsed",
+            key="theme_select",
+        )
+        if selected_theme != ui_theme:
+            st.session_state["ui_theme"] = selected_theme
             st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown(f"# 🛣️ {T['title']}")
     st.markdown("---")
@@ -396,17 +486,14 @@ with st.sidebar:
 
     # Options
     st.markdown(f"### {T['options']}")
-    st.markdown('<div style="margin-top:-12px"></div>', unsafe_allow_html=True)
 
     lang_labels = {"1": "🇧🇷 Português (Brasil)", "2": "🇺🇸 English", "3": "🇪🇸 Español"}
     lang_choice = st.selectbox(T["resume_language"], list(lang_labels.keys()), format_func=lambda k: lang_labels[k])
     lang = LANGUAGES[lang_choice]
 
-    st.markdown('<div style="margin-top:-12px"></div>', unsafe_allow_html=True)
     fmt_labels = {"docx": "📝 DOCX (Word)", "pdf": "📄 PDF", "all": "📦 Both"}
     fmt = st.selectbox(T["output_format"], list(fmt_labels.keys()), format_func=lambda k: fmt_labels[k])
 
-    st.markdown('<div style="margin-top:-12px"></div>', unsafe_allow_html=True)
     model = st.text_input(T["ai_model"], value=MODEL, help=T["model_help"])
 
     st.markdown(
@@ -430,9 +517,25 @@ with tab_gen:
         label_visibility="collapsed",
     )
 
+    has_data    = bool(raw_data.strip())
+    has_resumes = n_resumes > 0
+    can_generate = has_data and has_resumes
+
+    if not has_data and not has_resumes:
+        st.warning(T["no_data_and_resumes_error"])
+    elif not has_data:
+        st.warning(T["no_data_error"])
+    elif not has_resumes:
+        st.warning(T["no_resumes_error"])
+
     col1, col2, col3 = st.columns([2, 1, 1])
     with col1:
-        generate_btn = st.button(T["generate_btn"], type="primary", use_container_width=True)
+        generate_btn = st.button(
+            T["generate_btn"],
+            type="primary",
+            use_container_width=True,
+            disabled=not can_generate,
+        )
 
     if generate_btn:
         if not job.strip():
@@ -526,7 +629,7 @@ with tab_resumes:
                 dest = OLD_RESUMES_DIR / f.name
                 dest.write_bytes(f.read())
                 saved_count += 1
-            st.session_state["uploader_key"] += 1  # resets the file_uploader widget
+            st.session_state["uploader_key"] += 1
             st.success(T["upload_success"].format(n=saved_count))
             st.rerun()
 
