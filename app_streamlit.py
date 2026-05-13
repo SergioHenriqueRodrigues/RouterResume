@@ -19,167 +19,158 @@ ALLOWED_EXTS = {".pdf", ".docx", ".txt", ".md"}
 UI_STRINGS = {
     "pt": {
         "title": "RouterResume",
-        "options": "Opções",
         "resume_language": "Idioma do currículo",
         "output_format": "Formato de saída",
         "ai_model": "Modelo de IA",
         "model_help": "Modelos gratuitos em openrouter.ai/models",
-        "model_not_found": "Se o modelo não estiver funcionando, procure modelos gratuitos disponíveis em:",
-        "tab_generate": "Gerar",
-        "tab_resumes": "Currículos Antigos",
-        "tab_data": "Dados do Perfil",
+        "model_not_found": "⚠️ Se o modelo não estiver funcionando, procure modelos gratuitos em:",
+        "tab_generate": "🚀 Gerar",
+        "tab_resumes": "📁 Currículos Antigos",
+        "tab_data": "👤 Dados do Perfil",
         "job_label": "Cole a descrição da vaga",
         "job_placeholder": "Cole aqui o texto completo da vaga — título, empresa, requisitos, responsabilidades, tudo...",
-        "generate_btn": "Gerar currículo",
+        "generate_btn": "🚀 Gerar currículo",
         "no_job_error": "Por favor, cole uma descrição de vaga antes.",
         "no_api_error": "OPENROUTER_API_KEY não configurada. Defina no ambiente e reinicie.",
-        "no_data_error": "Preencha seus **Dados do Perfil** antes de gerar um currículo.",
-        "no_resumes_error": "Adicione ao menos um **Currículo Antigo** para melhorar os resultados.",
-        "no_data_and_resumes_error": "Preencha seus **Dados do Perfil** e adicione ao menos um **Currículo Antigo** antes de gerar.",
-        "status_reading": "Lendo dados do perfil... ({chars:,} caracteres)",
-        "status_resumes": "Currículos antigos: {n} arquivo(s)",
-        "status_calling": "Chamando OpenRouter ({model})...",
-        "status_done": "Concluído!",
+        "no_data_error": "⚠️ Preencha seus **Dados do Perfil** (aba 👤) antes de gerar um currículo.",
+        "no_resumes_error": "⚠️ Adicione ao menos um **Currículo Antigo** (aba 📁) para melhorar os resultados.",
+        "no_data_and_resumes_error": "⚠️ Preencha seus **Dados do Perfil** (aba 👤) e adicione ao menos um **Currículo Antigo** (aba 📁) antes de gerar.",
+        "status_reading": "📄 Lendo dados do perfil... ({chars:,} caracteres)",
+        "status_resumes": "📁 Currículos antigos: {n} arquivo(s)",
+        "status_calling": "🤖 Chamando OpenRouter ({model})...",
+        "status_done": "✅ Concluído!",
         "status_title_ok": "Currículo gerado!",
         "status_title_fail": "Falhou",
         "status_generating": "Gerando seu currículo...",
         "api_fail": "Chamada à API falhou. Verifique o nome do modelo ou a chave.",
         "error_prefix": "Erro: ",
-        "download_title": "### Download",
-        "preview_title": "Pré-visualização",
+        "download_title": "### 💾 Download",
+        "preview_title": "📄 Pré-visualização",
         "upload_title": "### Enviar currículos",
         "upload_label": "Solte os arquivos aqui",
-        "upload_success": "{n} arquivo(s) enviado(s)",
+        "upload_success": "✓ {n} arquivo(s) enviado(s)",
         "saved_files": "### Arquivos salvos",
         "no_resumes": "Nenhum currículo ainda. Envie alguns à esquerda.",
         "profile_title": "### Seus dados brutos de perfil",
         "profile_caption": "Adicione qualquer coisa sobre você — sem formato obrigatório. Quanto mais, melhor.",
         "profile_placeholder": "Jogue aqui tudo: experiências, habilidades, educação, projetos, conquistas...",
-        "save_btn": "Salvar data.md",
-        "save_success": "Salvo!",
-        "status_ok_data": "data.md — {chars:,} caracteres",
-        "status_warn_data": "data.md está vazio",
-        "status_ok_resumes": "{n} currículo(s) antigo(s)",
-        "status_warn_resumes": "Nenhum currículo antigo",
-        "theme_label": "Tema",
-        "lang_ui_label": "Idioma da interface",
+        "save_btn": "💾 Salvar data.md",
+        "save_success": "✓ Salvo!",
+        "status_ok_data": "✓ data.md — {chars:,} caracteres",
+        "status_warn_data": "⚠ data.md está vazio",
+        "status_ok_resumes": "✓ {n} currículo(s) antigo(s)",
+        "status_warn_resumes": "○ Nenhum currículo antigo",
         "theme_light": "Claro",
         "theme_dark": "Escuro",
         "theme_system": "Sistema",
-        "fmt_docx": "DOCX (Word)",
-        "fmt_pdf": "PDF",
-        "fmt_both": "Ambos",
-        "upload_btn": "Enviar arquivos",
+        "fmt_docx": "📝 DOCX (Word)",
+        "fmt_pdf": "📄 PDF",
+        "fmt_both": "📦 Ambos",
+        "upload_btn": "📤 Enviar arquivos",
         "upload_select": "arquivo(s) selecionado(s). Clique em Enviar para salvar.",
     },
     "en": {
         "title": "RouterResume",
-        "options": "Options",
         "resume_language": "Resume language",
         "output_format": "Output format",
         "ai_model": "AI model",
         "model_help": "Free models at openrouter.ai/models",
-        "model_not_found": "If the model is not responding, look for available free models at:",
-        "tab_generate": "Generate",
-        "tab_resumes": "Old Resumes",
-        "tab_data": "Profile Data",
+        "model_not_found": "⚠️ If the model is not responding, look for free models at:",
+        "tab_generate": "🚀 Generate",
+        "tab_resumes": "📁 Old Resumes",
+        "tab_data": "👤 Profile Data",
         "job_label": "Paste the job description",
         "job_placeholder": "Paste the full job posting here — title, company, requirements, responsibilities, everything...",
-        "generate_btn": "Generate resume",
+        "generate_btn": "🚀 Generate resume",
         "no_job_error": "Please paste a job description first.",
         "no_api_error": "OPENROUTER_API_KEY not set. Set it in your environment and restart.",
-        "no_data_error": "Fill in your **Profile Data** before generating a resume.",
-        "no_resumes_error": "Add at least one **Old Resume** to improve the results.",
-        "no_data_and_resumes_error": "Fill in your **Profile Data** and add at least one **Old Resume** before generating.",
-        "status_reading": "Reading profile data... ({chars:,} chars)",
-        "status_resumes": "Old resumes: {n} file(s)",
-        "status_calling": "Calling OpenRouter ({model})...",
-        "status_done": "Done!",
+        "no_data_error": "⚠️ Fill in your **Profile Data** (👤 tab) before generating a resume.",
+        "no_resumes_error": "⚠️ Add at least one **Old Resume** (📁 tab) to improve the results.",
+        "no_data_and_resumes_error": "⚠️ Fill in your **Profile Data** (👤 tab) and add at least one **Old Resume** (📁 tab) before generating.",
+        "status_reading": "📄 Reading profile data... ({chars:,} chars)",
+        "status_resumes": "📁 Old resumes: {n} file(s)",
+        "status_calling": "🤖 Calling OpenRouter ({model})...",
+        "status_done": "✅ Done!",
         "status_title_ok": "Resume generated!",
         "status_title_fail": "Failed",
         "status_generating": "Generating your resume...",
         "api_fail": "API call failed. Check model name or API key.",
         "error_prefix": "Error: ",
-        "download_title": "### Download",
-        "preview_title": "Preview",
+        "download_title": "### 💾 Download",
+        "preview_title": "📄 Preview",
         "upload_title": "### Upload resumes",
         "upload_label": "Drop files here",
-        "upload_success": "{n} file(s) uploaded",
+        "upload_success": "✓ {n} file(s) uploaded",
         "saved_files": "### Saved files",
         "no_resumes": "No old resumes yet. Upload some on the left.",
         "profile_title": "### Your raw profile data",
-        "profile_caption": "Add anything about yourself — no format required. The more you add, the better the generated resumes.",
+        "profile_caption": "Add anything about yourself — no format required. The more you add, the better.",
         "profile_placeholder": "Dump anything here: experiences, skills, education, projects, achievements...",
-        "save_btn": "Save data.md",
-        "save_success": "Saved!",
-        "status_ok_data": "data.md — {chars:,} chars",
-        "status_warn_data": "data.md is empty",
-        "status_ok_resumes": "{n} old resume(s)",
-        "status_warn_resumes": "No old resumes",
-        "theme_label": "Theme",
-        "lang_ui_label": "Interface language",
+        "save_btn": "💾 Save data.md",
+        "save_success": "✓ Saved!",
+        "status_ok_data": "✓ data.md — {chars:,} chars",
+        "status_warn_data": "⚠ data.md is empty",
+        "status_ok_resumes": "✓ {n} old resume(s)",
+        "status_warn_resumes": "○ No old resumes",
         "theme_light": "Light",
         "theme_dark": "Dark",
         "theme_system": "System",
-        "fmt_docx": "DOCX (Word)",
-        "fmt_pdf": "PDF",
-        "fmt_both": "Both",
-        "upload_btn": "Upload files",
+        "fmt_docx": "📝 DOCX (Word)",
+        "fmt_pdf": "📄 PDF",
+        "fmt_both": "📦 Both",
+        "upload_btn": "📤 Upload files",
         "upload_select": "file(s) selected. Click Upload to save.",
     },
     "es": {
         "title": "RouterResume",
-        "options": "Opciones",
         "resume_language": "Idioma del currículum",
         "output_format": "Formato de salida",
         "ai_model": "Modelo de IA",
         "model_help": "Modelos gratuitos en openrouter.ai/models",
-        "model_not_found": "Si el modelo no responde, busca modelos gratuitos disponibles en:",
-        "tab_generate": "Generar",
-        "tab_resumes": "CV Anteriores",
-        "tab_data": "Datos del Perfil",
+        "model_not_found": "⚠️ Si el modelo no responde, busca modelos gratuitos en:",
+        "tab_generate": "🚀 Generar",
+        "tab_resumes": "📁 CV Anteriores",
+        "tab_data": "👤 Datos del Perfil",
         "job_label": "Pega la descripción del puesto",
         "job_placeholder": "Pega aquí el texto completo de la oferta — título, empresa, requisitos, responsabilidades, todo...",
-        "generate_btn": "Generar currículum",
+        "generate_btn": "🚀 Generar currículum",
         "no_job_error": "Por favor, pega una descripción de trabajo primero.",
         "no_api_error": "OPENROUTER_API_KEY no configurada. Configúrala en tu entorno y reinicia.",
-        "no_data_error": "Completa tus **Datos del Perfil** antes de generar un currículum.",
-        "no_resumes_error": "Agrega al menos un **CV Anterior** para mejorar los resultados.",
-        "no_data_and_resumes_error": "Completa tus **Datos del Perfil** y agrega al menos un **CV Anterior** antes de generar.",
-        "status_reading": "Leyendo datos del perfil... ({chars:,} caracteres)",
-        "status_resumes": "CV anteriores: {n} archivo(s)",
-        "status_calling": "Llamando a OpenRouter ({model})...",
-        "status_done": "¡Listo!",
+        "no_data_error": "⚠️ Completa tus **Datos del Perfil** (pestaña 👤) antes de generar un currículum.",
+        "no_resumes_error": "⚠️ Agrega al menos un **CV Anterior** (pestaña 📁) para mejorar los resultados.",
+        "no_data_and_resumes_error": "⚠️ Completa tus **Datos del Perfil** (pestaña 👤) y agrega al menos un **CV Anterior** (pestaña 📁) antes de generar.",
+        "status_reading": "📄 Leyendo datos del perfil... ({chars:,} caracteres)",
+        "status_resumes": "📁 CV anteriores: {n} archivo(s)",
+        "status_calling": "🤖 Llamando a OpenRouter ({model})...",
+        "status_done": "✅ ¡Listo!",
         "status_title_ok": "¡Currículum generado!",
         "status_title_fail": "Falló",
         "status_generating": "Generando tu currículum...",
         "api_fail": "Falló la llamada a la API. Verifica el modelo o la clave.",
         "error_prefix": "Error: ",
-        "download_title": "### Descargar",
-        "preview_title": "Vista previa",
+        "download_title": "### 💾 Descargar",
+        "preview_title": "📄 Vista previa",
         "upload_title": "### Subir currículums",
         "upload_label": "Suelta los archivos aquí",
-        "upload_success": "{n} archivo(s) subido(s)",
+        "upload_success": "✓ {n} archivo(s) subido(s)",
         "saved_files": "### Archivos guardados",
         "no_resumes": "Sin currículums aún. Sube algunos a la izquierda.",
         "profile_title": "### Tus datos de perfil en bruto",
         "profile_caption": "Agrega cualquier cosa sobre ti — sin formato obligatorio. Cuanto más, mejor.",
         "profile_placeholder": "Vuelca aquí todo: experiencias, habilidades, educación, proyectos, logros...",
-        "save_btn": "Guardar data.md",
-        "save_success": "¡Guardado!",
-        "status_ok_data": "data.md — {chars:,} caracteres",
-        "status_warn_data": "data.md está vacío",
-        "status_ok_resumes": "{n} CV(s) anterior(es)",
-        "status_warn_resumes": "Sin CVs anteriores",
-        "theme_label": "Tema",
-        "lang_ui_label": "Idioma de la interfaz",
+        "save_btn": "💾 Guardar data.md",
+        "save_success": "✓ ¡Guardado!",
+        "status_ok_data": "✓ data.md — {chars:,} caracteres",
+        "status_warn_data": "⚠ data.md está vacío",
+        "status_ok_resumes": "✓ {n} CV(s) anterior(es)",
+        "status_warn_resumes": "○ Sin CVs anteriores",
         "theme_light": "Claro",
         "theme_dark": "Oscuro",
         "theme_system": "Sistema",
-        "fmt_docx": "DOCX (Word)",
-        "fmt_pdf": "PDF",
-        "fmt_both": "Ambos",
-        "upload_btn": "Subir archivos",
+        "fmt_docx": "📝 DOCX (Word)",
+        "fmt_pdf": "📄 PDF",
+        "fmt_both": "📦 Ambos",
+        "upload_btn": "📤 Subir archivos",
         "upload_select": "archivo(s) seleccionado(s). Haz clic en Subir para guardar.",
     },
 }
@@ -188,7 +179,7 @@ UI_STRINGS = {
 
 st.set_page_config(
     page_title="RouterResume",
-    page_icon="🛣️",
+    page_icon="R",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -253,132 +244,77 @@ THEME_CSS = {
 
 st.markdown(f"<style>{THEME_CSS[ui_theme]}</style>", unsafe_allow_html=True)
 
-st.markdown(f"""
+st.markdown("""
 <style>
-  /* Hide streamlit chrome */
-  #MainMenu {{ display: none !important; }}
-  footer {{ display: none !important; }}
-  header {{ background: transparent !important; }}
+  #MainMenu { display: none !important; }
+  footer { display: none !important; }
+  header { background: transparent !important; }
 
-  /* Hide Streamlit's own sidebar toggle buttons — usamos o nosso */
   [data-testid="stToolbar"],
   [data-testid="stDecoration"],
   [data-testid="stStatusWidget"],
   [data-testid="stSidebarCollapseButton"],
   [data-testid="stSidebarCollapsedControl"],
-  [data-testid="collapsedControl"] {{
-    display: none !important;
-  }}
+  [data-testid="collapsedControl"] { display: none !important; }
 
-  /* ── Botão customizado de abrir sidebar ── */
-  #open-sidebar-btn {{
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 999999;
-    background: #5B8EF5;
-    border: none;
-    border-radius: 8px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    transition: background 0.15s;
-  }}
-  #open-sidebar-btn:hover {{ background: #4a7de8; }}
-  #open-sidebar-btn svg {{ stroke: #fff; fill: none; }}
+  h1 { font-weight: 600 !important; letter-spacing: -0.5px !important; }
+  h3 { font-weight: 500 !important; color: var(--text-muted) !important; margin-bottom: 0 !important; }
 
-  /* Sidebar dividers */
-  [data-testid="stSidebar"] hr {{
-    border-color: var(--border) !important;
-  }}
-  [data-testid="stSidebar"] [data-testid="stVerticalBlock"]:first-child .stColumns {{
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }}
-  [data-testid="stSidebar"] [data-testid="stVerticalBlock"]:first-child .stSelectbox > div > div {{
-    min-height: 32px !important;
-    font-size: 12px !important;
-  }}
+  [data-testid="stSidebar"] { background: var(--bg) !important; border-right: 1px solid var(--border) !important; }
+  [data-testid="stSidebar"] h1 { font-size: 32px !important; font-weight: 800 !important; letter-spacing: -1px !important; color: var(--text) !important; margin-bottom: 8px !important; }
+  [data-testid="stSidebar"] hr { border-color: var(--border) !important; }
 
-  /* Clean typography */
-  h1 {{ font-weight: 600 !important; letter-spacing: -0.5px !important; }}
-  h3 {{ font-weight: 500 !important; color: var(--text-muted) !important; margin-bottom: 0 !important; }}
-
-  /* Sidebar */
-  [data-testid="stSidebar"] {{ background: var(--bg) !important; border-right: 1px solid var(--border) !important; }}
-  [data-testid="stSidebar"] h1 {{ font-size: 18px !important; color: var(--text) !important; }}
-
-  /* Sidebar labels */
   [data-testid="stSidebar"] label,
   [data-testid="stSidebar"] .stSelectbox label,
-  [data-testid="stSidebar"] .stTextInput label {{
+  [data-testid="stSidebar"] .stTextInput label {
     color: var(--text) !important;
     font-weight: 600 !important;
     font-size: 13px !important;
-  }}
+  }
 
-  /* Status badges */
-  .status-ok   {{ background: var(--status-ok-bg); border: 1px solid var(--status-ok-border); color: var(--status-ok-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }}
-  .status-warn {{ background: var(--status-warn-bg); border: 1px solid var(--status-warn-border); color: var(--status-warn-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }}
+  .status-ok   { background: var(--status-ok-bg); border: 1px solid var(--status-ok-border); color: var(--status-ok-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
+  .status-warn { background: var(--status-warn-bg); border: 1px solid var(--status-warn-border); color: var(--status-warn-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
 
-  /* File cards */
-  .file-card {{ background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }}
-  .file-name {{ font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text); }}
-  .file-size {{ font-size: 11px; color: var(--text-muted); margin-top: 2px; }}
+  .file-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+  .file-name { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text); }
+  .file-size { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-  /* Preview box */
-  .preview-box {{ background: var(--preview-bg); border: 1px solid var(--preview-border); border-radius: 8px; padding: 20px; font-family: monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; max-height: 500px; overflow-y: auto; color: var(--text); }}
+  .preview-box { background: var(--preview-bg); border: 1px solid var(--preview-border); border-radius: 8px; padding: 20px; font-family: monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; max-height: 500px; overflow-y: auto; color: var(--text); }
 
-  /* Stbutton tweaks */
-  .stButton > button {{ border-radius: 6px !important; font-weight: 500 !important; }}
-  div[data-testid="stDownloadButton"] > button {{ width: 100% !important; }}
+  .stButton > button { border-radius: 6px !important; font-weight: 500 !important; }
+  div[data-testid="stDownloadButton"] > button { width: 100% !important; }
 
-  /* Delete button */
-  .del-btn-wrap {{ display: flex; align-items: center; height: 100%; padding-bottom: 8px; }}
-  .del-btn-wrap .stButton > button {{
-    background: #DC2626 !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 6px !important;
-    padding: 6px 10px !important;
-    font-size: 14px !important;
-    line-height: 1 !important;
-    height: 40px !important;
-    min-height: unset !important;
-    width: 100% !important;
-  }}
-  .del-btn-wrap .stButton > button:hover {{ background: #B91C1C !important; }}
+  .del-btn-wrap { display: flex; align-items: center; height: 100%; padding-bottom: 8px; }
+  .del-btn-wrap .stButton > button {
+    background: #DC2626 !important; color: #fff !important;
+    border: none !important; border-radius: 6px !important;
+    padding: 6px 10px !important; font-size: 14px !important;
+    line-height: 1 !important; height: 40px !important;
+    min-height: unset !important; width: 100% !important;
+  }
+  .del-btn-wrap .stButton > button:hover { background: #B91C1C !important; }
 
-  /* Sidebar options — tight gap */
   [data-testid="stSidebar"] .stSelectbox,
   [data-testid="stSidebar"] .stTextInput,
-  [data-testid="stSidebar"] .stMarkdown p {{ margin-bottom: 0px !important; }}
-  [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div {{ gap: 0px !important; }}
-  [data-testid="stSidebar"] .block-container {{ gap: 0px !important; }}
+  [data-testid="stSidebar"] .stMarkdown p { margin-bottom: 0px !important; }
+  [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { gap: 0px !important; }
+  [data-testid="stSidebar"] .block-container { gap: 0px !important; }
 
-  /* Model hint link */
-  .model-hint {{ font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }}
-  .model-hint a {{ color: #5B8EF5; text-decoration: none; }}
-  .model-hint a:hover {{ text-decoration: underline; }}
+  .model-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+  .model-hint a { color: #5B8EF5; text-decoration: none; }
+  .model-hint a:hover { text-decoration: underline; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── botão customizado para abrir o sidebar ────────────────────────────────────
+# ── botão customizado para abrir/fechar sidebar ────────────────────────────────
 import streamlit.components.v1 as components
 
 components.html("""
 <script>
 (function() {
   var pd = window.parent.document;
-
-  // Injeta o botão e o estilo diretamente no documento pai
   if (!pd.getElementById('open-sidebar-btn')) {
     var style = pd.createElement('style');
-    style.id = 'open-sidebar-btn-style';
     style.textContent = [
       '#open-sidebar-btn {',
       '  position: fixed; top: 10px; left: 10px; z-index: 999999;',
@@ -387,20 +323,7 @@ components.html("""
       '  display: none; align-items: center; justify-content: center;',
       '  cursor: pointer; opacity: 0.6; transition: opacity 0.15s;',
       '}',
-      '#open-sidebar-btn:hover { opacity: 1; }'
-    ].join('');
-    pd.head.appendChild(style);
-
-    var btn = pd.createElement('button');
-    btn.id = 'open-sidebar-btn';
-    btn.title = 'Abrir menu';
-    btn.setAttribute('aria-label', 'Abrir menu');
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8A098" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
-    pd.body.appendChild(btn);
-
-    // Botão de FECHAR dentro do sidebar
-    var closeStyle = pd.createElement('style');
-    closeStyle.textContent = [
+      '#open-sidebar-btn:hover { opacity: 1; }',
       '#close-sidebar-btn {',
       '  position: absolute; top: 8px; right: 8px; z-index: 999999;',
       '  background: transparent; border: none; border-radius: 6px;',
@@ -410,12 +333,15 @@ components.html("""
       '}',
       '#close-sidebar-btn:hover { opacity: 1; }'
     ].join('');
-    pd.head.appendChild(closeStyle);
+    pd.head.appendChild(style);
+
+    var btn = pd.createElement('button');
+    btn.id = 'open-sidebar-btn';
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8A098" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+    pd.body.appendChild(btn);
 
     var closeBtn = pd.createElement('button');
     closeBtn.id = 'close-sidebar-btn';
-    closeBtn.title = 'Fechar menu';
-    closeBtn.setAttribute('aria-label', 'Fechar menu');
     closeBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
 
     function isSidebarOpen() {
@@ -424,7 +350,6 @@ components.html("""
       if (sb.getAttribute('aria-expanded') === 'false') return false;
       return sb.getBoundingClientRect().width > 60;
     }
-
     function clickNative() {
       var native =
         pd.querySelector('[data-testid="stSidebarCollapsedControl"] button') ||
@@ -437,35 +362,19 @@ components.html("""
         native.style.display = prev;
       }
     }
-
     function update() {
       var open = isSidebarOpen();
       btn.style.display = open ? 'none' : 'flex';
       closeBtn.style.display = open ? 'flex' : 'none';
-
-      // Garante que o closeBtn está dentro do sidebar
       var sb = pd.querySelector('[data-testid="stSidebar"]');
-      if (sb && !sb.contains(closeBtn)) {
-        sb.style.position = 'relative';
-        sb.appendChild(closeBtn);
-      }
+      if (sb && !sb.contains(closeBtn)) { sb.style.position = 'relative'; sb.appendChild(closeBtn); }
     }
-
-    btn.addEventListener('click', function() {
-      clickNative();
-      setTimeout(update, 400);
-    });
-
-    closeBtn.addEventListener('click', function() {
-      clickNative();
-      setTimeout(update, 400);
-    });
-
+    btn.addEventListener('click', function() { clickNative(); setTimeout(update, 400); });
+    closeBtn.addEventListener('click', function() { clickNative(); setTimeout(update, 400); });
     new MutationObserver(update).observe(pd.documentElement, {
       childList: true, subtree: true, attributes: true,
       attributeFilter: ['aria-expanded', 'class', 'style']
     });
-
     update();
     setTimeout(update, 800);
   }
@@ -476,9 +385,11 @@ components.html("""
 # ── sidebar ────────────────────────────────────────────────────────────────────
 
 with st.sidebar:
-    st.markdown(f"# 🛣️ {T['title']}")
+    st.markdown(
+        f'<p style="font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1.1;margin:0 0 8px 0; padding:0 0 20px 0;">{T["title"]}</p>',
+        unsafe_allow_html=True
+    )
 
-    # ── topo do sidebar: [lang] [tema] [fechar] na mesma linha ──────────────
     col_lang, col_theme, col_close = st.columns([3, 2, 1])
     with col_lang:
         ui_lang_options = {"pt": "🇧🇷 Português", "en": "🇺🇸 English", "es": "🇪🇸 Español"}
@@ -514,7 +425,6 @@ with st.sidebar:
             st.session_state["ui_theme"] = selected_theme
             st.rerun()
     with col_close:
-        # espaço reservado — o botão fechar (JS) fica posicionado em absolute right
         st.markdown('<div style="height:36px"></div>', unsafe_allow_html=True)
 
     st.markdown("---")
@@ -536,9 +446,7 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # Options
-    st.markdown(f"### {T['options']}")
-
+    # Options — sem título
     lang_labels = {"1": "🇧🇷 Português (Brasil)", "2": "🇺🇸 English", "3": "🇪🇸 Español"}
     lang_choice = st.selectbox(T["resume_language"], list(lang_labels.keys()), format_func=lambda k: lang_labels[k])
     lang = LANGUAGES[lang_choice]
@@ -547,7 +455,6 @@ with st.sidebar:
     fmt = st.selectbox(T["output_format"], list(fmt_labels.keys()), format_func=lambda k: fmt_labels[k])
 
     model = st.text_input(T["ai_model"], value=MODEL, help=T["model_help"])
-
     st.markdown(
         f'<div class="model-hint">{T["model_not_found"]} '
         f'<a href="https://openrouter.ai/models?q=free" target="_blank">openrouter.ai/models?q=free</a></div>',
@@ -569,8 +476,8 @@ with tab_gen:
         label_visibility="collapsed",
     )
 
-    has_data    = bool(raw_data.strip())
-    has_resumes = n_resumes > 0
+    has_data     = bool(raw_data.strip())
+    has_resumes  = n_resumes > 0
     can_generate = has_data and has_resumes
 
     if not has_data and not has_resumes:
@@ -634,7 +541,6 @@ with tab_gen:
                     status.update(label=T["status_title_fail"], state="error")
                     st.error(f"{T['error_prefix']}{e}")
 
-    # Download + preview
     if "saved_paths" in st.session_state and st.session_state["saved_paths"]:
         st.markdown("---")
         st.markdown(T["download_title"])
