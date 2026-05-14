@@ -1,13 +1,12 @@
 import streamlit as st
 
 from generate import OLD_RESUMES_DIR
+from ui.components import render_file_card
 
 ALLOWED_EXTS = {".pdf", ".docx", ".txt", ".md"}
 
 
 def render_tab_resumes(T: dict) -> None:
-    """Render the Old Resumes tab."""
-
     OLD_RESUMES_DIR.mkdir(exist_ok=True)
 
     col_up, col_list = st.columns([1, 1], gap="large")
@@ -43,7 +42,7 @@ def render_tab_resumes(T: dict) -> None:
             st.success(T["upload_success"].format(n=saved_count))
             st.rerun()
 
-    # ── file list column ───────────────────────────────────────────────────────
+    # ── saved files column ─────────────────────────────────────────────────────
     with col_list:
         st.markdown(T["saved_files"])
 
@@ -58,21 +57,15 @@ def render_tab_resumes(T: dict) -> None:
             st.info(T["no_resumes"])
         else:
             for f in files:
-                size     = f.stat().st_size
+                size = f.stat().st_size
                 size_str = f"{size / 1024:.1f} KB" if size >= 1024 else f"{size} B"
 
-                c1, c2 = st.columns([5, 1])
-                with c1:
-                    st.markdown(
-                        f'<div class="file-card">'
-                        f'<div><div class="file-name">{f.name}</div>'
-                        f'<div class="file-size">{size_str}</div></div>'
-                        f'</div>',
-                        unsafe_allow_html=True,
-                    )
-                with c2:
-                    st.markdown('<div class="del-btn-wrap">', unsafe_allow_html=True)
-                    if st.button("", key=f"del_{f.name}", icon=":material/delete:", help=f"Remove {f.name}"):
-                        f.unlink()
-                        st.rerun()
-                    st.markdown("</div>", unsafe_allow_html=True)
+                if render_file_card(
+                    display_name=f.name,
+                    subtitle=size_str,
+                    download_files=[f],
+                    delete_key=f"del_{f.name}",
+                    delete_help=T["history_delete_help"],
+                ):
+                    f.unlink()
+                    st.rerun()

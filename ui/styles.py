@@ -83,15 +83,6 @@ GLOBAL_CSS = """
   .stButton > button { border-radius: 6px !important; font-weight: 500 !important; }
   div[data-testid="stDownloadButton"] > button { width: 100% !important; }
 
-  .del-btn-wrap { display: flex; align-items: center; height: 100%; padding-bottom: 8px; }
-  .del-btn-wrap .stButton > button {
-    background: #DC2626 !important; color: #fff !important;
-    border: none !important; border-radius: 6px !important;
-    padding: 6px 10px !important; font-size: 14px !important;
-    line-height: 1 !important; height: 40px !important;
-    min-height: unset !important; width: 100% !important;
-  }
-  .del-btn-wrap .stButton > button:hover { background: #B91C1C !important; }
 
   [data-testid="stSidebar"] .stSelectbox,
   [data-testid="stSidebar"] .stTextInput,
@@ -99,9 +90,45 @@ GLOBAL_CSS = """
   [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { gap: 0px !important; }
   [data-testid="stSidebar"] .block-container { gap: 0px !important; }
 
-  .model-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+  .model-hint { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+  [data-testid="stSidebar"] .stMarkdown:has(.model-hint) { margin-top: -14px !important; margin-bottom: 16px !important; }
   .model-hint a { color: #5B8EF5; text-decoration: none; }
   .model-hint a:hover { text-decoration: underline; }
+
+  /* ── file cards ──────────────────────────────────────────────────────────── */
+  [data-testid="stVerticalBlockBorderWrapper"] {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    margin-bottom: 6px !important;
+  }
+  [data-testid="stVerticalBlockBorderWrapper"] > div {
+    padding: 6px 12px !important;
+  }
+  [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"],
+  [data-testid="stVerticalBlockBorderWrapper"] [data-testid="column"] > [data-testid="stVerticalBlock"] {
+    gap: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stHorizontalBlock"] {
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  [data-testid="stVerticalBlockBorderWrapper"] button {
+    height: 30px !important;
+    min-height: unset !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+  }
+  /* delete = last column of the outer row in each card */
+  [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:last-child button {
+    background: #DC2626 !important;
+    color: #fff !important;
+    border-color: transparent !important;
+  }
+  [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:last-child button:hover {
+    background: #B91C1C !important;
+  }
 </style>
 """
 

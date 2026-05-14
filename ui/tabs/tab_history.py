@@ -4,12 +4,9 @@ from datetime import datetime
 import streamlit as st
 
 from generate import OUTPUT_DIR
+from ui.components import render_file_card
 
 _ALLOWED = {".pdf", ".docx"}
-_MIME = {
-    ".pdf":  "application/pdf",
-    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-}
 
 
 def _parse_stem(stem: str) -> tuple[str, str]:
@@ -47,40 +44,16 @@ def render_tab_history(T: dict) -> None:
         groups.setdefault(f.stem, []).append(f)
 
     for stem, group_files in groups.items():
-        col_date, col_dl, col_del = st.columns([4, 3, 1])
+        name, date_str = _parse_stem(stem)
 
-        with col_date:
-            name, date_str = _parse_stem(stem)
-            st.markdown(
-                f"**{name}**<br>"
-                f'<span style="font-size:0.85em;opacity:0.65;">{date_str}</span>',
-                unsafe_allow_html=True,
-            )
-
-        with col_dl:
-            dl_cols = st.columns(len(group_files))
-            for bc, f in zip(dl_cols, group_files):
-                with bc:
-                    st.download_button(
-                        label=f.suffix.upper().lstrip("."),
-                        data=f.read_bytes(),
-                        file_name=f.name,
-                        mime=_MIME.get(f.suffix.lower(), "application/octet-stream"),
-                        icon=":material/download:",
-                        use_container_width=True,
-                        key=f"hist_dl_{f.name}",
-                    )
-
-        with col_del:
-            if st.button(
-                "",
-                key=f"hist_del_{stem}",
-                icon=":material/delete:",
-                help=T["history_delete_help"],
-            ):
-                for f in group_files:
-                    if f.exists():
-                        f.unlink()
-                st.rerun()
-
-        st.divider()
+        if render_file_card(
+            display_name=name,
+            subtitle=date_str,
+            download_files=group_files,
+            delete_key=f"del_{stem}",
+            delete_help=T["history_delete_help"],
+        ):
+            for f in group_files:
+                if f.exists():
+                    f.unlink()
+            st.rerun()

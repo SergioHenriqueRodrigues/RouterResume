@@ -117,6 +117,7 @@ def render_sidebar() -> tuple[str, str, str, str]:
                 index=list(ui_lang_options.keys()).index(ui_lang),
                 label_visibility="collapsed",
                 key="lang_select",
+                disabled=is_generating,
             )
             if selected_lang != ui_lang:
                 st.session_state["ui_lang"] = selected_lang
@@ -138,6 +139,7 @@ def render_sidebar() -> tuple[str, str, str, str]:
                 index=theme_opts_keys.index(ui_theme),
                 label_visibility="collapsed",
                 key="theme_select",
+                disabled=is_generating,
             )
             if selected_theme != ui_theme:
                 st.session_state["ui_theme"] = selected_theme
