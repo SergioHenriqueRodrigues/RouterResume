@@ -34,13 +34,13 @@ st.set_page_config(
 inject_styles(st.session_state["ui_theme"])
 
 # ── sidebar ────────────────────────────────────────────────────────────────────
-lang, fmt, model, T = render_sidebar()
+lang, fmt, model, api_key, T = render_sidebar()
 
 # ── main tabs ──────────────────────────────────────────────────────────────────
 tab_gen, tab_resumes, tab_data = st.tabs([T["tab_generate"], T["tab_resumes"], T["tab_data"]])
 
 with tab_gen:
-    render_tab_generate(lang, fmt, model, T)
+    render_tab_generate(lang, fmt, model, api_key, T)
 
 with tab_resumes:
     render_tab_resumes(T)

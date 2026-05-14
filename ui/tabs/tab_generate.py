@@ -10,7 +10,7 @@ from generate import (
 )
 
 
-def render_tab_generate(lang: str, fmt: str, model: str, T: dict) -> None:
+def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) -> None:
     """Render the Generate tab."""
 
     raw_data         = read_data_md()
@@ -48,57 +48,60 @@ def render_tab_generate(lang: str, fmt: str, model: str, T: dict) -> None:
     if generate_btn:
         if not job.strip():
             st.error(T["no_job_error"])
-        elif not os.environ.get("OPENROUTER_API_KEY"):
-            st.error(T["no_api_error"])
         else:
-            with st.status(T["status_generating"], expanded=True) as status:
-                st.write(T["status_reading"].format(chars=len(raw_data)))
-                st.write(T["status_resumes"].format(n=n_resumes))
-                st.write(T["status_calling"].format(model=model))
-
-                try:
-                    prompt = build_prompt(raw_data, old_resumes_text, job.strip(), lang)
-                    ui_stub = {
-                        "calling_api":      "Calling",
-                        "api_key_error":    "",
-                        "api_key_hint":     "",
-                        "api_key_hint2":    "",
-                        "api_error":        "API error",
-                        "api_empty":        "Empty response",
-                        "api_unexpected":   "Unexpected response",
-                    }
-                    resume = call_model(prompt, model, ui_stub)
-
-                    ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
-                    base_name = f"routerresume_{ts}"
-                    ui_doc    = {
-                        "docx_missing": "python-docx not installed",
-                        "pdf_missing":  "reportlab not installed",
-                    }
-
-                    saved_paths = []
-                    if fmt in ("docx", "all"):
-                        p = save_docx(resume, base_name, lang, ui_doc)
-                        if p:
-                            saved_paths.append(p)
-                    if fmt in ("pdf", "all"):
-                        p = save_pdf(resume, base_name, lang, ui_doc)
-                        if p:
-                            saved_paths.append(p)
-
-                    st.write(T["status_done"])
-                    status.update(label=T["status_title_ok"], state="complete")
-
-                    st.session_state["resume_text"] = resume
-                    st.session_state["saved_paths"] = saved_paths
-
-                except SystemExit:
-                    status.update(label=T["status_title_fail"], state="error")
-                    st.error(T["api_fail"])
-                except Exception as e:
-                    status.update(label=T["status_title_fail"], state="error")
-                    st.error(f"{T['error_prefix']}{e}")
-
+            resolved_key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
+            if not resolved_key:
+                st.error(T["no_api_key_error"])
+            else:
+                os.environ["OPENROUTER_API_KEY"] = resolved_key
+                with st.status(T["status_generating"], expanded=True) as status:
+                    st.write(T["status_reading"].format(chars=len(raw_data)))
+                    st.write(T["status_resumes"].format(n=n_resumes))
+                    st.write(T["status_calling"].format(model=model))
+    
+                    try:
+                        prompt = build_prompt(raw_data, old_resumes_text, job.strip(), lang)
+                        ui_stub = {
+                            "calling_api":      "Calling",
+                            "api_key_error":    "",
+                            "api_key_hint":     "",
+                            "api_key_hint2":    "",
+                            "api_error":        "API error",
+                            "api_empty":        "Empty response",
+                            "api_unexpected":   "Unexpected response",
+                        }
+                        resume = call_model(prompt, model, ui_stub)
+    
+                        ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
+                        base_name = f"routerresume_{ts}"
+                        ui_doc    = {
+                            "docx_missing": "python-docx not installed",
+                            "pdf_missing":  "reportlab not installed",
+                        }
+    
+                        saved_paths = []
+                        if fmt in ("docx", "all"):
+                            p = save_docx(resume, base_name, lang, ui_doc)
+                            if p:
+                                saved_paths.append(p)
+                        if fmt in ("pdf", "all"):
+                            p = save_pdf(resume, base_name, lang, ui_doc)
+                            if p:
+                                saved_paths.append(p)
+    
+                        st.write(T["status_done"])
+                        status.update(label=T["status_title_ok"], state="complete")
+    
+                        st.session_state["resume_text"] = resume
+                        st.session_state["saved_paths"] = saved_paths
+    
+                    except SystemExit:
+                        status.update(label=T["status_title_fail"], state="error")
+                        st.error(T["api_fail"])
+                    except Exception as e:
+                        status.update(label=T["status_title_fail"], state="error")
+                        st.error(f"{T['error_prefix']}{e}")
+    
     # ── download buttons ───────────────────────────────────────────────────────
     if st.session_state.get("saved_paths"):
         st.markdown("---")

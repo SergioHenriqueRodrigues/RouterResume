@@ -50,6 +50,9 @@ UI_STRINGS = {
         "fmt_both": "📦 Ambos",
         "upload_btn": "📤 Enviar arquivos",
         "upload_select": "arquivo(s) selecionado(s). Clique em Enviar para salvar.",
+        "api_key_label": "OpenRouter API Key",
+        "api_key_help": "Começa com sk-or-... Tem prioridade sobre a variável de ambiente.",
+        "no_api_key_error": "Informe a API Key do OpenRouter na barra lateral.",
     },
     "en": {
         "title": "RouterResume",
@@ -102,6 +105,9 @@ UI_STRINGS = {
         "fmt_both": "📦 Both",
         "upload_btn": "📤 Upload files",
         "upload_select": "file(s) selected. Click Upload to save.",
+        "api_key_label": "OpenRouter API Key",
+        "api_key_help": "Starts with sk-or-... Takes priority over the environment variable.",
+        "no_api_key_error": "Enter your OpenRouter API Key in the sidebar.",
     },
     "es": {
         "title": "RouterResume",
@@ -154,5 +160,8 @@ UI_STRINGS = {
         "fmt_both": "📦 Ambos",
         "upload_btn": "📤 Subir archivos",
         "upload_select": "archivo(s) seleccionado(s). Haz clic en Subir para guardar.",
+        "api_key_label": "OpenRouter API Key",
+        "api_key_help": "Empieza con sk-or-... Tiene prioridad sobre la variable de entorno.",
+        "no_api_key_error": "Ingresa tu API Key de OpenRouter en la barra lateral.",
     },
 }

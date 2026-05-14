@@ -203,4 +203,16 @@ def render_sidebar() -> tuple[str, str, str, str]:
             unsafe_allow_html=True,
         )
 
-    return lang, fmt, model, T
+        st.markdown("---")
+
+        api_key = st.text_input(
+            T["api_key_label"],
+            value=st.session_state.get("api_key", ""),
+            type="password",
+            help=T["api_key_help"],
+            key="api_key_input",
+        )
+        if api_key:
+            st.session_state["api_key"] = api_key
+
+    return lang, fmt, model, api_key, T
