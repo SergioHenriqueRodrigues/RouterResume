@@ -1,0 +1,172 @@
+import streamlit as st
+
+_CONTENT = {
+    "pt": """
+### Passo 1 — Configure sua API Key
+
+Na **barra lateral**, cole sua chave do OpenRouter (`sk-or-...`) e clique em **Salvar chave**.
+
+> Não tem chave? Crie grátis em [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (sem cartão de crédito).
+
+Use a aba **🔑 Testar Key** para confirmar que a chave e o modelo estão funcionando antes de gerar.
+
+---
+
+### Passo 2 — Adicione seus dados de perfil
+
+Vá para a aba **👤 Dados do Perfil** e cole tudo sobre você:
+
+- Experiências profissionais
+- Habilidades técnicas e comportamentais
+- Educação, certificações, cursos
+- Projetos pessoais e conquistas
+
+Sem formato obrigatório — jogue tudo junto. Quanto mais informação, melhor o resultado.
+Clique em **💾 Salvar data.md** ao terminar.
+
+---
+
+### Passo 3 — Adicione currículos antigos
+
+Vá para a aba **📁 Currículos Antigos** e envie arquivos `.pdf`, `.docx`, `.txt` ou `.md`.
+
+Eles ajudam a IA a usar seu estilo de escrita e destacar experiências reais com mais precisão.
+
+---
+
+### Passo 4 — Gere o currículo
+
+Vá para a aba **🚀 Gerar**, cole a descrição completa da vaga e clique em **🚀 Gerar currículo**.
+
+Na barra lateral você pode ajustar:
+- **Idioma do currículo** — Português, Inglês ou Espanhol
+- **Formato de saída** — DOCX, PDF ou ambos
+- **Modelo de IA** — veja modelos gratuitos em [openrouter.ai/models](https://openrouter.ai/models)
+
+Após gerar, baixe o arquivo e revise antes de enviar.
+
+---
+
+### Dicas
+
+- `data.md` é cumulativo — vá adicionando informações ao longo do tempo para melhores resultados
+- Sempre revise o currículo gerado; a IA pode preencher lacunas com dados plausíveis mas imprecisos
+- Erro **401/403** → chave inválida ou sem permissão
+- Erro **404** → modelo não encontrado, troque pelo nome correto em openrouter.ai/models
+- Erro **429** → rate limit atingido, aguarde alguns segundos ou troque de modelo
+""",
+    "en": """
+### Step 1 — Set up your API Key
+
+In the **sidebar**, paste your OpenRouter key (`sk-or-...`) and click **Save key**.
+
+> No key yet? Create one for free at [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (no credit card needed).
+
+Use the **🔑 Test Key** tab to confirm your key and model are working before generating.
+
+---
+
+### Step 2 — Add your profile data
+
+Go to the **👤 Profile Data** tab and dump everything about yourself:
+
+- Work experience
+- Technical and soft skills
+- Education, certifications, courses
+- Personal projects and achievements
+
+No format required — mix everything together. The more data, the better the result.
+Click **💾 Save data.md** when done.
+
+---
+
+### Step 3 — Add old resumes
+
+Go to the **📁 Old Resumes** tab and upload `.pdf`, `.docx`, `.txt` or `.md` files.
+
+They help the AI match your writing style and highlight real experience more accurately.
+
+---
+
+### Step 4 — Generate the resume
+
+Go to the **🚀 Generate** tab, paste the full job description and click **🚀 Generate resume**.
+
+In the sidebar you can adjust:
+- **Resume language** — Portuguese, English or Spanish
+- **Output format** — DOCX, PDF or both
+- **AI model** — browse free models at [openrouter.ai/models](https://openrouter.ai/models)
+
+After generating, download the file and review it before sending.
+
+---
+
+### Tips
+
+- `data.md` is cumulative — keep adding information over time for better results
+- Always review generated resumes; the AI may fill gaps with plausible but inaccurate details
+- Error **401/403** → invalid key or missing permission
+- Error **404** → model not found, replace with the correct name from openrouter.ai/models
+- Error **429** → rate limit reached, wait a moment or switch models
+""",
+    "es": """
+### Paso 1 — Configura tu API Key
+
+En la **barra lateral**, pega tu clave de OpenRouter (`sk-or-...`) y haz clic en **Guardar clave**.
+
+> ¿No tienes clave? Créala gratis en [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (sin tarjeta de crédito).
+
+Usa la pestaña **🔑 Probar Key** para confirmar que tu clave y modelo funcionan antes de generar.
+
+---
+
+### Paso 2 — Agrega tus datos de perfil
+
+Ve a la pestaña **👤 Datos del Perfil** y vuelca todo sobre ti:
+
+- Experiencia laboral
+- Habilidades técnicas y blandas
+- Educación, certificaciones, cursos
+- Proyectos personales y logros
+
+Sin formato obligatorio — mezcla todo junto. Cuanta más información, mejor el resultado.
+Haz clic en **💾 Guardar data.md** al terminar.
+
+---
+
+### Paso 3 — Agrega CVs anteriores
+
+Ve a la pestaña **📁 CV Anteriores** y sube archivos `.pdf`, `.docx`, `.txt` o `.md`.
+
+Ayudan a la IA a usar tu estilo de escritura y destacar experiencias reales con más precisión.
+
+---
+
+### Paso 4 — Genera el currículum
+
+Ve a la pestaña **🚀 Generar**, pega la descripción completa de la oferta y haz clic en **🚀 Generar currículum**.
+
+En la barra lateral puedes ajustar:
+- **Idioma del CV** — Portugués, Inglés o Español
+- **Formato de salida** — DOCX, PDF o ambos
+- **Modelo de IA** — consulta modelos gratuitos en [openrouter.ai/models](https://openrouter.ai/models)
+
+Después de generar, descarga el archivo y revísalo antes de enviarlo.
+
+---
+
+### Consejos
+
+- `data.md` es acumulativo — sigue añadiendo información con el tiempo para mejores resultados
+- Siempre revisa los currículums generados; la IA puede rellenar huecos con datos plausibles pero imprecisos
+- Error **401/403** → clave inválida o sin permiso
+- Error **404** → modelo no encontrado, reemplázalo con el nombre correcto en openrouter.ai/models
+- Error **429** → límite de solicitudes alcanzado, espera un momento o cambia de modelo
+""",
+}
+
+
+def render_tab_how_to(T: dict) -> None:
+    st.markdown(f"### {T['tab_how_to_title']}")
+    lang = st.session_state.get("ui_lang", "pt")
+    st.markdown(_CONTENT.get(lang, _CONTENT["en"]))

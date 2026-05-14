@@ -205,14 +205,17 @@ def render_sidebar() -> tuple[str, str, str, str]:
 
         st.markdown("---")
 
-        api_key = st.text_input(
-            T["api_key_label"],
-            value=st.session_state.get("api_key", ""),
-            type="password",
-            help=T["api_key_help"],
-            key="api_key_input",
-        )
-        if api_key:
-            st.session_state["api_key"] = api_key
+        with st.form("api_key_form", border=False):
+            api_key_input = st.text_input(
+                T["api_key_label"],
+                value=st.session_state.get("api_key", ""),
+                type="password",
+                help=T["api_key_help"],
+            )
+            if st.form_submit_button(T["api_key_btn"], use_container_width=True):
+                if api_key_input:
+                    st.session_state["api_key"] = api_key_input
+
+        api_key = st.session_state.get("api_key", "")
 
     return lang, fmt, model, api_key, T

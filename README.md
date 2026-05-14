@@ -1,12 +1,13 @@
 <div align="center">
 
-# 🎯 ATS Resume Generator
+# RouterResume
 
-**PT-BR** | [EN](#-ats-resume-generator-1)
+**PT-BR** | [EN](#routerresume-1)
 
 Gera currículos ATS otimizados para vagas específicas a partir dos seus dados brutos, usando modelos de IA gratuitos via OpenRouter.
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Interface-Streamlit-red?logo=streamlit&logoColor=white)](https://streamlit.io)
 [![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-purple)](https://openrouter.ai)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Free](https://img.shields.io/badge/Custo-Gratuito-brightgreen)](https://openrouter.ai)
@@ -30,20 +31,26 @@ Você acumula seus dados uma vez. Para cada vaga, o sistema extrai o que é rele
 ## Estrutura do projeto
 
 ```
-ats-resume-generator/
+RouterResume/
 │
-├── 📄 generate.py          ← script principal (rode esse)
+├── 📄 app_streamlit.py     ← interface web (rode esse)
+├── 📄 generate.py          ← motor de geração
 ├── 📝 data.md              ← SEUS dados brutos (adicione à vontade)
-├── 📋 job_description.txt  ← cole aqui o texto da vaga
 ├── 📦 requirements.txt
 │
-├── 📁 old_resumes/         ← jogue seus currículos antigos aqui
-│   ├── resume_2022.pdf
-│   ├── linkedin_export.txt
-│   └── old_resume.docx
+├── 📁 ui/                  ← componentes da interface
+│   ├── sidebar.py
+│   ├── i18n.py
+│   ├── styles.py
+│   └── tabs/
+│       ├── tab_how_to.py   ← Como usar
+│       ├── tab_generate.py ← Gerar currículo
+│       ├── tab_resumes.py  ← Currículos antigos
+│       ├── tab_data.py     ← Dados do perfil
+│       └── tab_test_key.py ← Testar API Key
 │
+├── 📁 old_resumes/         ← seus currículos antigos (.pdf, .docx, .txt, .md)
 └── 📁 output/              ← currículos gerados ficam aqui
-    └── ats_resume_20240428_1430.docx / .pdf
 ```
 
 ---
@@ -52,8 +59,8 @@ ats-resume-generator/
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/ats-resume-generator.git
-cd ats-resume-generator
+git clone https://github.com/seu-usuario/RouterResume.git
+cd RouterResume
 ```
 
 ### 2. Instale as dependências
@@ -61,32 +68,38 @@ cd ats-resume-generator
 pip install -r requirements.txt
 ```
 
-### 3. Crie sua conta no OpenRouter
-- Acesse **[openrouter.ai](https://openrouter.ai)** → Sign in com Google
-- Vá em **Keys** → **Create Key**
-- Copie a chave `sk-or-...` (é gratuito, sem cartão)
-
-### 4. Configure a chave de API
-
-**Windows:**
-```cmd
-setx OPENROUTER_API_KEY "sk-or-..."
-```
-> ⚠️ Feche e abra o terminal depois.
-
-**Mac/Linux:**
+### 3. Rode a interface
 ```bash
-export OPENROUTER_API_KEY="sk-or-..."
-# Para persistir, adicione essa linha ao seu ~/.zshrc ou ~/.bashrc
+streamlit run app_streamlit.py
 ```
+
+O browser abre automaticamente em `http://localhost:8501`.
 
 ---
 
 ## Como usar
 
-### Passo 1 — Alimente seus dados
+A interface é organizada em **5 abas**:
 
-Edite o arquivo `data.md` e jogue qualquer informação sobre você — **sem formato obrigatório**:
+| Aba | Função |
+|-----|--------|
+| 📖 Como usar | Este guia |
+| 🚀 Gerar | Gerar o currículo a partir de uma vaga |
+| 📁 Currículos Antigos | Enviar currículos anteriores para contexto |
+| 👤 Dados do Perfil | Editar seus dados brutos (`data.md`) |
+| 🔑 Testar Key | Testar se a API Key e o modelo estão funcionando |
+
+### Passo 1 — Configure sua API Key
+
+Na **barra lateral**, cole sua chave do OpenRouter (`sk-or-...`) e clique em **Salvar chave**.
+
+> Não tem chave? Crie grátis em [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (sem cartão de crédito).
+
+Use a aba **🔑 Testar Key** para confirmar que está funcionando.
+
+### Passo 2 — Adicione seus dados de perfil
+
+Vá para a aba **👤 Dados do Perfil** e cole tudo sobre você — sem formato obrigatório:
 
 ```
 Trabalhei 4 anos na Empresa X como dev Python.
@@ -96,64 +109,17 @@ Graduado em Ciência da Computação pela UFPE em 2019.
 AWS Certified — 2022. Inglês avançado.
 ```
 
-> 💡 Cole currículos antigos completos, experiências soltas, certificados, projetos pessoais — tudo junto e misturado. A IA organiza.
+> Quanto mais informação, melhor o resultado. Cole currículos antigos completos, experiências soltas, projetos, tudo.
 
-Ou coloque arquivos direto na pasta `old_resumes/` — suporta `.pdf`, `.docx`, `.txt`, `.md`.
+### Passo 3 — Adicione currículos antigos
 
-### Passo 2 — Adicione a vaga
+Vá para a aba **📁 Currículos Antigos** e envie arquivos `.pdf`, `.docx`, `.txt` ou `.md`.
 
-Cole o texto completo da vaga em `job_description.txt`.
+### Passo 4 — Gere o currículo
 
-### Passo 3 — Gere o currículo
+Vá para a aba **🚀 Gerar**, cole a descrição completa da vaga e clique em **🚀 Gerar currículo**.
 
-```bash
-python generate.py
-```
-
-O programa vai te perguntar tudo interativamente:
-
-```
-══════════════════════════════════════════════════
-  Select system language / Selecione o idioma
-══════════════════════════════════════════════════
-  [1] Português (Brasil)
-  [2] English
-  [3] Español
-
-📋 Descrição da vaga — onde está?
-  [1] Tenho um arquivo (job_description.txt)
-  [2] Vou colar agora
-
-🌐 Idioma do currículo:
-  [1] Português (Brasil)
-  [2] Inglês
-  [3] Espanhol
-
-💾 Formato de saída:
-  [1] DOCX (Word)
-  [2] PDF
-  [3] Ambos
-
-🤖 Modelo de IA:
-  [1] Padrão (inclusionai/ling-2.6-1t:free)
-  [2] Digitar outro modelo
-```
-
-O currículo gerado vai para a pasta `output/` com timestamp.
-
----
-
-## Fluxo recomendado
-
-```
-1. Preencha data.md com tudo que sabe sobre você
-2. Jogue currículos antigos em old_resumes/
-3. Achou uma vaga? → Cole em job_description.txt
-4. Rode: python generate.py
-5. Abra output/ats_resume_*.docx, revise e envie ✅
-```
-
-> **Dica:** `data.md` é cumulativo. Cada vez que ganhar uma skill, terminar um projeto ou tirar uma certificação, adicione lá. Com o tempo seus currículos ficam cada vez melhores.
+Na barra lateral você ajusta idioma do currículo, formato (DOCX/PDF) e modelo de IA.
 
 ---
 
@@ -163,10 +129,10 @@ Veja todos em **[openrouter.ai/models](https://openrouter.ai/models)** (filtre p
 
 | Modelo | Qualidade |
 |--------|-----------|
-| `inclusionai/ling-2.6-1t:free` | ⭐⭐⭐⭐ |
 | `google/gemini-2.5-flash-preview:free` | ⭐⭐⭐⭐⭐ |
 | `meta-llama/llama-3.3-70b-instruct:free` | ⭐⭐⭐⭐ |
 | `deepseek/deepseek-r1:free` | ⭐⭐⭐⭐ |
+| `inclusionai/ling-2.6-1t:free` | ⭐⭐⭐⭐ |
 
 > ⚠️ Modelos gratuitos podem ter rate limit. Se receber erro 429 ou 404, tente outro modelo.
 
@@ -177,19 +143,21 @@ Veja todos em **[openrouter.ai/models](https://openrouter.ai/models)** (filtre p
 - **Mais dados = melhor resultado** — cole tudo, mesmo que pareça irrelevante. A IA filtra o que importa para cada vaga.
 - **Revise sempre** — a IA pode preencher lacunas com informações plausíveis mas imprecisas.
 - **Interface e currículo são independentes** — você pode usar o sistema em português e gerar o currículo em inglês.
+- **`data.md` é cumulativo** — vá adicionando ao longo do tempo. Com o tempo seus currículos ficam cada vez melhores.
 
 ---
 ---
 
 <div align="center">
 
-# 🎯 ATS Resume Generator
+# RouterResume
 
-[PT-BR](#-ats-resume-generator) | **EN**
+[PT-BR](#routerresume) | **EN**
 
 Generates ATS-optimized resumes for specific job postings from your raw data, using free AI models via OpenRouter.
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Interface-Streamlit-red?logo=streamlit&logoColor=white)](https://streamlit.io)
 [![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-purple)](https://openrouter.ai)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Free](https://img.shields.io/badge/Cost-Free-brightgreen)](https://openrouter.ai)
@@ -213,20 +181,26 @@ You accumulate your data once. For each job posting, the system extracts what's 
 ## Project structure
 
 ```
-ats-resume-generator/
+RouterResume/
 │
-├── 📄 generate.py          ← main script (run this)
+├── 📄 app_streamlit.py     ← web interface (run this)
+├── 📄 generate.py          ← generation engine
 ├── 📝 data.md              ← YOUR raw data (keep adding anytime)
-├── 📋 job_description.txt  ← paste the job posting here
 ├── 📦 requirements.txt
 │
-├── 📁 old_resumes/         ← drop your old resumes here
-│   ├── resume_2022.pdf
-│   ├── linkedin_export.txt
-│   └── old_resume.docx
+├── 📁 ui/                  ← interface components
+│   ├── sidebar.py
+│   ├── i18n.py
+│   ├── styles.py
+│   └── tabs/
+│       ├── tab_how_to.py   ← How to use
+│       ├── tab_generate.py ← Generate resume
+│       ├── tab_resumes.py  ← Old resumes
+│       ├── tab_data.py     ← Profile data
+│       └── tab_test_key.py ← Test API Key
 │
+├── 📁 old_resumes/         ← your old resumes (.pdf, .docx, .txt, .md)
 └── 📁 output/              ← generated resumes saved here
-    └── ats_resume_20240428_1430.docx / .pdf
 ```
 
 ---
@@ -235,8 +209,8 @@ ats-resume-generator/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/ats-resume-generator.git
-cd ats-resume-generator
+git clone https://github.com/your-username/RouterResume.git
+cd RouterResume
 ```
 
 ### 2. Install dependencies
@@ -244,32 +218,38 @@ cd ats-resume-generator
 pip install -r requirements.txt
 ```
 
-### 3. Create your OpenRouter account
-- Go to **[openrouter.ai](https://openrouter.ai)** → Sign in with Google
-- Go to **Keys** → **Create Key**
-- Copy the `sk-or-...` key (it's free, no credit card needed)
-
-### 4. Set your API key
-
-**Windows:**
-```cmd
-setx OPENROUTER_API_KEY "sk-or-..."
-```
-> ⚠️ Close and reopen the terminal after running this.
-
-**Mac/Linux:**
+### 3. Run the interface
 ```bash
-export OPENROUTER_API_KEY="sk-or-..."
-# To persist, add this line to your ~/.zshrc or ~/.bashrc
+streamlit run app_streamlit.py
 ```
+
+The browser opens automatically at `http://localhost:8501`.
 
 ---
 
 ## How to use
 
-### Step 1 — Feed your data
+The interface is organized into **5 tabs**:
 
-Edit `data.md` and dump any information about yourself — **no format required**:
+| Tab | Purpose |
+|-----|---------|
+| 📖 How to use | This guide |
+| 🚀 Generate | Generate a resume from a job posting |
+| 📁 Old Resumes | Upload previous resumes for context |
+| 👤 Profile Data | Edit your raw data (`data.md`) |
+| 🔑 Test Key | Test whether your API Key and model are working |
+
+### Step 1 — Set up your API Key
+
+In the **sidebar**, paste your OpenRouter key (`sk-or-...`) and click **Save key**.
+
+> No key yet? Create one for free at [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (no credit card needed).
+
+Use the **🔑 Test Key** tab to confirm it's working.
+
+### Step 2 — Add your profile data
+
+Go to the **👤 Profile Data** tab and dump everything about yourself — no format required:
 
 ```
 Worked 4 years at Company X as a Python developer.
@@ -279,64 +259,17 @@ BSc in Computer Science, UFPE, 2019.
 AWS Certified — 2022. Fluent English.
 ```
 
-> 💡 Paste full old resumes, loose experiences, certificates, personal projects — all mixed together. The AI organizes it.
+> The more data, the better. Paste full old resumes, loose experiences, projects — everything together.
 
-Or drop files directly into the `old_resumes/` folder — supports `.pdf`, `.docx`, `.txt`, `.md`.
+### Step 3 — Add old resumes
 
-### Step 2 — Add the job posting
+Go to the **📁 Old Resumes** tab and upload `.pdf`, `.docx`, `.txt` or `.md` files.
 
-Paste the full job description text into `job_description.txt`.
+### Step 4 — Generate the resume
 
-### Step 3 — Generate the resume
+Go to the **🚀 Generate** tab, paste the full job description and click **🚀 Generate resume**.
 
-```bash
-python generate.py
-```
-
-The program asks everything interactively:
-
-```
-══════════════════════════════════════════════════
-  Select system language / Selecione o idioma
-══════════════════════════════════════════════════
-  [1] Português (Brasil)
-  [2] English
-  [3] Español
-
-📋 Job description — where is it?
-  [1] I have a file (job_description.txt)
-  [2] I'll paste it now
-
-🌐 Resume language:
-  [1] Portuguese (Brazil)
-  [2] English
-  [3] Spanish
-
-💾 Output format:
-  [1] DOCX (Word)
-  [2] PDF
-  [3] Both
-
-🤖 AI model:
-  [1] Default (inclusionai/ling-2.6-1t:free)
-  [2] Type a custom model ID
-```
-
-The generated resume goes to the `output/` folder with a timestamp.
-
----
-
-## Recommended workflow
-
-```
-1. Fill data.md with everything you know about yourself
-2. Drop old resumes into old_resumes/
-3. Found a job? → Paste it into job_description.txt
-4. Run: python generate.py
-5. Open output/ats_resume_*.docx, review and send ✅
-```
-
-> **Tip:** `data.md` is cumulative. Every time you gain a new skill, finish a project or get certified, add it there. Over time your resumes get better and better.
+In the sidebar you can adjust the resume language, output format (DOCX/PDF) and AI model.
 
 ---
 
@@ -346,10 +279,10 @@ See all at **[openrouter.ai/models](https://openrouter.ai/models)** (filter by "
 
 | Model | Quality |
 |-------|---------|
-| `inclusionai/ling-2.6-1t:free` | ⭐⭐⭐⭐ |
 | `google/gemini-2.5-flash-preview:free` | ⭐⭐⭐⭐⭐ |
 | `meta-llama/llama-3.3-70b-instruct:free` | ⭐⭐⭐⭐ |
 | `deepseek/deepseek-r1:free` | ⭐⭐⭐⭐ |
+| `inclusionai/ling-2.6-1t:free` | ⭐⭐⭐⭐ |
 
 > ⚠️ Free models can have rate limits. If you get a 429 or 404 error, try a different model.
 
@@ -360,3 +293,4 @@ See all at **[openrouter.ai/models](https://openrouter.ai/models)** (filter by "
 - **More data = better results** — dump everything, even if it seems irrelevant. The AI filters what matters for each job.
 - **Always review** — the AI may fill gaps with plausible but inaccurate details.
 - **Interface and resume language are independent** — you can run the system in English and generate the resume in Portuguese.
+- **`data.md` is cumulative** — keep adding over time. Your resumes get better and better.
