@@ -43,6 +43,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
             type="primary",
             use_container_width=True,
             disabled=not can_generate,
+            icon=":material/rocket_launch:",
         )
 
     if generate_btn:
@@ -115,11 +116,12 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                     else "application/pdf"
                 )
                 st.download_button(
-                    label=f"⬇ {path.name}",
+                    label=path.name,
                     data=path.read_bytes(),
                     file_name=path.name,
                     mime=mime,
                     use_container_width=True,
+                    icon=":material/download:",
                 )
 
     # ── preview ────────────────────────────────────────────────────────────────

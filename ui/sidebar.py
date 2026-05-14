@@ -212,7 +212,7 @@ def render_sidebar() -> tuple[str, str, str, str]:
                 type="password",
                 help=T["api_key_help"],
             )
-            if st.form_submit_button(T["api_key_btn"], use_container_width=True):
+            if st.form_submit_button(T["api_key_btn"], use_container_width=True, icon=":material/save:"):
                 if api_key_input:
                     st.session_state["api_key"] = api_key_input
 

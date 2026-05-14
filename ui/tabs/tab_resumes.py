@@ -32,6 +32,7 @@ def render_tab_resumes(T: dict) -> None:
             type="primary",
             use_container_width=True,
             disabled=not has_files,
+            icon=":material/upload:",
         ):
             saved_count = 0
             for f in uploaded:
@@ -64,14 +65,14 @@ def render_tab_resumes(T: dict) -> None:
                 with c1:
                     st.markdown(
                         f'<div class="file-card">'
-                        f'<div><div class="file-name">📄 {f.name}</div>'
+                        f'<div><div class="file-name">{f.name}</div>'
                         f'<div class="file-size">{size_str}</div></div>'
                         f'</div>',
                         unsafe_allow_html=True,
                     )
                 with c2:
                     st.markdown('<div class="del-btn-wrap">', unsafe_allow_html=True)
-                    if st.button("🗑", key=f"del_{f.name}", help=f"Remove {f.name}"):
+                    if st.button("", key=f"del_{f.name}", icon=":material/delete:", help=f"Remove {f.name}"):
                         f.unlink()
                         st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)

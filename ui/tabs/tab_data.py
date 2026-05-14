@@ -19,7 +19,7 @@ def render_tab_data(T: dict) -> None:
         placeholder=T["profile_placeholder"],
     )
 
-    if st.button(T["save_btn"], type="primary"):
+    if st.button(T["save_btn"], type="primary", icon=":material/save:"):
         DATA_MD.write_text(new_content, encoding="utf-8")
         st.success(T["save_success"])
         st.rerun()

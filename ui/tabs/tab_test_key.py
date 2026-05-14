@@ -14,9 +14,9 @@ def render_tab_test_key(api_key: str, model: str, T: dict) -> None:
         st.warning(T["test_key_no_key"])
         return
 
-    st.info(f"🔑 `{key_to_use[:15]}...`")
+    st.info(f"`{key_to_use[:15]}...`")
 
-    if st.button(T["test_key_btn"], type="primary"):
+    if st.button(T["test_key_btn"], type="primary", icon=":material/wifi_tethering:"):
         payload = json.dumps({
             "model": model,
             "messages": [{"role": "user", "content": "Say 'OK'"}],
