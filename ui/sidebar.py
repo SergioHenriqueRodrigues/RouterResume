@@ -97,6 +97,8 @@ def render_sidebar() -> tuple[str, str, str, str]:
     ui_theme = st.session_state.get("ui_theme", "system")
     T        = UI_STRINGS[ui_lang]
 
+    is_generating = st.session_state.get("is_generating", False)
+
     with st.sidebar:
         st.markdown(
             f'<p style="font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);'
@@ -182,6 +184,7 @@ def render_sidebar() -> tuple[str, str, str, str]:
             T["resume_language"],
             list(lang_labels.keys()),
             format_func=lambda k: lang_labels[k],
+            disabled=is_generating,
         )
         lang = LANGUAGES[lang_choice]
 
@@ -194,16 +197,15 @@ def render_sidebar() -> tuple[str, str, str, str]:
             T["output_format"],
             list(fmt_labels.keys()),
             format_func=lambda k: fmt_labels[k],
+            disabled=is_generating,
         )
 
-        model = st.text_input(T["ai_model"], value=MODEL, help=T["model_help"])
+        model = st.text_input(T["ai_model"], value=MODEL, help=T["model_help"], disabled=is_generating)
         st.markdown(
             f'<div class="model-hint">{T["model_not_found"]} '
             f'<a href="https://openrouter.ai/models?q=free" target="_blank">openrouter.ai/models?q=free</a></div>',
             unsafe_allow_html=True,
         )
-
-        st.markdown("---")
 
         with st.form("api_key_form", border=False):
             api_key_input = st.text_input(
@@ -211,8 +213,9 @@ def render_sidebar() -> tuple[str, str, str, str]:
                 value=st.session_state.get("api_key", ""),
                 type="password",
                 help=T["api_key_help"],
+                disabled=is_generating,
             )
-            if st.form_submit_button(T["api_key_btn"], use_container_width=True, icon=":material/save:"):
+            if st.form_submit_button(T["api_key_btn"], use_container_width=True, icon=":material/save:", disabled=is_generating):
                 if api_key_input:
                     st.session_state["api_key"] = api_key_input
 

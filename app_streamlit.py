@@ -11,6 +11,7 @@ from ui.styles import inject_styles
 from ui.sidebar import render_sidebar
 from ui.tabs.tab_how_to import render_tab_how_to
 from ui.tabs.tab_generate import render_tab_generate
+from ui.tabs.tab_history import render_tab_history
 from ui.tabs.tab_resumes import render_tab_resumes
 from ui.tabs.tab_data import render_tab_data
 from ui.tabs.tab_test_key import render_tab_test_key
@@ -39,8 +40,9 @@ inject_styles(st.session_state["ui_theme"])
 lang, fmt, model, api_key, T = render_sidebar()
 
 # ── main tabs ──────────────────────────────────────────────────────────────────
-tab_how_to, tab_gen, tab_resumes, tab_data, tab_test_key = st.tabs([
-    T["tab_how_to"], T["tab_generate"], T["tab_resumes"], T["tab_data"], T["tab_test_key"]
+tab_how_to, tab_gen, tab_history, tab_resumes, tab_data, tab_test_key = st.tabs([
+    T["tab_how_to"], T["tab_generate"], T["tab_history"],
+    T["tab_resumes"], T["tab_data"], T["tab_test_key"]
 ])
 
 with tab_how_to:
@@ -48,6 +50,9 @@ with tab_how_to:
 
 with tab_gen:
     render_tab_generate(lang, fmt, model, api_key, T)
+
+with tab_history:
+    render_tab_history(T)
 
 with tab_resumes:
     render_tab_resumes(T)
