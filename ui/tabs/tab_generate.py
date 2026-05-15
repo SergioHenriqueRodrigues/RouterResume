@@ -75,7 +75,12 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                 st.session_state["is_generating"] = True
                 st.session_state["pending_job"]   = job.strip()
                 st.session_state["pending_key"]   = resolved_key
+                st.session_state.pop("generation_error", None)
                 st.rerun()
+
+    # ── error from previous generation ────────────────────────────────────────
+    if st.session_state.get("generation_error"):
+        st.error(st.session_state["generation_error"])
 
     # ── run generation after rerun (button is already disabled) ───────────────
     if is_generating and "pending_job" in st.session_state:
@@ -108,17 +113,15 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                     if p:
                         saved_paths.append(p)
 
-                st.write(T["status_done"])
-                status.update(label=T["status_title_ok"], state="complete")
-
                 st.session_state["is_generating"] = False
                 st.session_state["resume_text"]   = resume
                 st.session_state["saved_paths"]   = saved_paths
+                st.rerun()
 
             except Exception as e:
                 st.session_state["is_generating"] = False
-                status.update(label=T["status_title_fail"], state="error")
-                st.error(f"{T['error_prefix']}{e}")
+                st.session_state["generation_error"] = f"{T['error_prefix']}{e}"
+                st.rerun()
 
     # ── download buttons ───────────────────────────────────────────────────────
     if st.session_state.get("saved_paths"):
