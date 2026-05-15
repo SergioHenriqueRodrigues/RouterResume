@@ -1,7 +1,9 @@
 import base64
 import datetime
 import os
+import re
 import time
+import unicodedata
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -12,6 +14,15 @@ from generate import (
     validate_job_description,
     OUTPUT_DIR,
 )
+
+
+def _job_slug(job_text: str) -> str:
+    first_line = next((l.strip() for l in job_text.splitlines() if l.strip()), "")
+    normalized = unicodedata.normalize("NFKD", first_line.lower())
+    ascii_str  = normalized.encode("ascii", "ignore").decode("ascii")
+    slug       = re.sub(r"[^\w\s]", "", ascii_str)
+    slug       = re.sub(r"\s+", "_", slug).strip("_")
+    return slug[:40] or "resume"
 
 
 def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) -> None:
@@ -101,7 +112,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                 progress.progress(100, text=T["status_elapsed"].format(secs=elapsed))
 
                 ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
-                base_name = f"routerresume_{ts}"
+                base_name = f"{_job_slug(job_text)}_{ts}"
 
                 saved_paths = []
                 if fmt in ("docx", "all"):
@@ -171,6 +182,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                     height=920,
                 )
             else:
+                st.caption(T["preview_caption"])
                 st.markdown(
                     f'<div class="preview-box">{st.session_state["resume_text"]}</div>',
                     unsafe_allow_html=True,
