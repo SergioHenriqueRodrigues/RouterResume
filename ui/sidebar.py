@@ -114,7 +114,7 @@ def _section_label(text: str, icon: str = "") -> None:
         if icon else ""
     )
     st.markdown(
-        f'<div style="display:flex;align-items:center;gap:6px;margin:28px 0 10px 0">'
+        f'<div style="display:flex;align-items:center;gap:6px;margin:10px 0 8px 0">'
         f'{icon_html}'
         f'<span style="font-size:0.70rem;font-weight:700;text-transform:uppercase;'
         f'letter-spacing:0.08em;color:var(--text-muted)">{text}</span>'
