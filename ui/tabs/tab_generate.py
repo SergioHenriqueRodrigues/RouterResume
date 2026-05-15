@@ -16,13 +16,25 @@ from generate import (
 )
 
 
+_GENERIC_LINE = re.compile(
+    r"^(about|sobre|acerca\s+de|job\s+desc|descri[çc][aã]o|description|"
+    r"responsibilities|responsabilidades|requirements|requisitos|"
+    r"overview|sum[aá]rio|summary|oferta|puesto|vaga|cargo|role|position|"
+    r"we\s+are|we'?re|our\s+team|nossa\s+empresa|nuestra\s+empresa)",
+    re.IGNORECASE,
+)
+
 def _job_slug(job_text: str) -> str:
-    first_line = next((l.strip() for l in job_text.splitlines() if l.strip()), "")
-    normalized = unicodedata.normalize("NFKD", first_line.lower())
-    ascii_str  = normalized.encode("ascii", "ignore").decode("ascii")
-    slug       = re.sub(r"[^\w\s]", "", ascii_str)
-    slug       = re.sub(r"\s+", "_", slug).strip("_")
-    return slug[:40] or "resume"
+    for raw in job_text.splitlines():
+        line = re.sub(r"[#*_`|]", "", raw).strip()  # strip markdown
+        if not line or _GENERIC_LINE.match(line) or len(line) > 80:
+            continue
+        normalized = unicodedata.normalize("NFKD", line.lower())
+        ascii_str  = normalized.encode("ascii", "ignore").decode("ascii")
+        slug       = re.sub(r"[^\w\s]", "", ascii_str)
+        slug       = re.sub(r"\s+", "_", slug).strip("_")
+        return slug[:40] or "resume"
+    return "resume"
 
 
 def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) -> None:
