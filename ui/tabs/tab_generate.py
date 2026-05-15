@@ -2,6 +2,7 @@ import base64
 import datetime
 import os
 import re
+import threading
 import time
 import unicodedata
 
@@ -116,12 +117,44 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
             st.write(T["status_resumes"].format(n=n_resumes))
 
             try:
-                prompt   = build_prompt(raw_data, old_resumes_text, job_text, lang)
+                prompt = build_prompt(raw_data, old_resumes_text, job_text, lang)
+                start  = time.time()
+
+                _result: list = [None]
+                _error:  list = [None]
+
+                def _run():
+                    try:
+                        _result[0] = call_model(prompt, model)
+                    except Exception as exc:
+                        _error[0] = exc
+
+                _thread = threading.Thread(target=_run, daemon=True)
+                _thread.start()
+
                 progress = st.progress(0, text=T["status_calling"].format(model=model))
-                start    = time.time()
-                resume   = call_model(prompt, model)
-                elapsed  = round(time.time() - start)
+                _fake = 0.0
+                while _thread.is_alive():
+                    time.sleep(0.35)
+                    if _fake < 25:
+                        _fake += 2.2
+                    elif _fake < 60:
+                        _fake += 0.9
+                    elif _fake < 78:
+                        _fake += 0.45
+                    elif _fake < 88:
+                        _fake += 0.22
+                    else:
+                        _fake += 0.12
+                    progress.progress(min(int(_fake), 95), text=T["status_calling"].format(model=model))
+
+                _thread.join()
+                if _error[0]:
+                    raise _error[0]
+
+                elapsed = round(time.time() - start)
                 progress.progress(100, text=T["status_elapsed"].format(secs=elapsed))
+                resume  = _result[0]
 
                 ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
                 base_name = f"{_job_slug(job_text)}_{ts}"
@@ -148,24 +181,34 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
 
     # ── download buttons ───────────────────────────────────────────────────────
     if st.session_state.get("saved_paths"):
+        all_paths = st.session_state["saved_paths"]
+        existing  = [p for p in all_paths if p.exists()]
+        deleted   = [p for p in all_paths if not p.exists()]
+
         st.markdown("---")
         st.markdown(T["download_title"])
-        dl_cols = st.columns(len(st.session_state["saved_paths"]))
-        for col, path in zip(dl_cols, st.session_state["saved_paths"]):
-            with col:
-                mime = (
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    if path.suffix == ".docx"
-                    else "application/pdf"
-                )
-                st.download_button(
-                    label=path.name,
-                    data=path.read_bytes(),
-                    file_name=path.name,
-                    mime=mime,
-                    use_container_width=True,
-                    icon=":material/download:",
-                )
+
+        if deleted and not existing:
+            st.warning(T["download_deleted"])
+        else:
+            if deleted:
+                st.warning(T["download_deleted"])
+            dl_cols = st.columns(len(existing))
+            for col, path in zip(dl_cols, existing):
+                with col:
+                    mime = (
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        if path.suffix == ".docx"
+                        else "application/pdf"
+                    )
+                    st.download_button(
+                        label=path.name,
+                        data=path.read_bytes(),
+                        file_name=path.name,
+                        mime=mime,
+                        use_container_width=True,
+                        icon=":material/download:",
+                    )
 
     # ── preview ────────────────────────────────────────────────────────────────
     if "resume_text" in st.session_state:
