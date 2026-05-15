@@ -1,9 +1,18 @@
+import re
 import streamlit as st
+from pathlib import Path
 
 from generate import OLD_RESUMES_DIR
 from ui.components import render_file_card
 
 ALLOWED_EXTS = {".pdf", ".docx", ".txt", ".md"}
+MAX_UPLOAD_MB = 5
+
+
+def _sanitize_filename(name: str) -> str:
+    name = Path(name).name
+    name = re.sub(r"[^\w.\-]", "_", name)
+    return name or "file"
 
 
 def render_tab_resumes(T: dict) -> None:
@@ -35,11 +44,19 @@ def render_tab_resumes(T: dict) -> None:
         ):
             saved_count = 0
             for f in uploaded:
-                dest = OLD_RESUMES_DIR / f.name
+                size_mb = f.size / (1024 * 1024)
+                if size_mb > MAX_UPLOAD_MB:
+                    st.warning(T["upload_too_large"].format(
+                        name=f.name, size=size_mb, limit=MAX_UPLOAD_MB
+                    ))
+                    continue
+                safe_name = _sanitize_filename(f.name)
+                dest = OLD_RESUMES_DIR / safe_name
                 dest.write_bytes(f.read())
                 saved_count += 1
             st.session_state["uploader_key"] = st.session_state.get("uploader_key", 0) + 1
-            st.success(T["upload_success"].format(n=saved_count))
+            if saved_count:
+                st.success(T["upload_success"].format(n=saved_count))
             st.rerun()
 
     # ── saved files column ─────────────────────────────────────────────────────

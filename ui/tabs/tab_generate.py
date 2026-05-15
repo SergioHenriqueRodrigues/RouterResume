@@ -89,31 +89,18 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
 
             try:
                 prompt = build_prompt(raw_data, old_resumes_text, job_text, lang)
-                ui_stub = {
-                    "calling_api":    "Calling",
-                    "api_key_error":  "",
-                    "api_key_hint":   "",
-                    "api_key_hint2":  "",
-                    "api_error":      "API error",
-                    "api_empty":      "Empty response",
-                    "api_unexpected": "Unexpected response",
-                }
-                resume = call_model(prompt, model, ui_stub)
+                resume = call_model(prompt, model)
 
                 ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
                 base_name = f"routerresume_{ts}"
-                ui_doc    = {
-                    "docx_missing": "python-docx not installed",
-                    "pdf_missing":  "reportlab not installed",
-                }
 
                 saved_paths = []
                 if fmt in ("docx", "all"):
-                    p = save_docx(resume, base_name, lang, ui_doc)
+                    p = save_docx(resume, base_name, lang)
                     if p:
                         saved_paths.append(p)
                 if fmt in ("pdf", "all"):
-                    p = save_pdf(resume, base_name, lang, ui_doc)
+                    p = save_pdf(resume, base_name, lang)
                     if p:
                         saved_paths.append(p)
 
