@@ -262,10 +262,10 @@ def render_sidebar() -> tuple:
                 icon=":material/save:",
                 disabled=is_generating,
             ):
-                st.session_state["model"] = model_input
                 if api_key_input:
                     if validate_api_key(api_key_input):
-                        st.session_state["api_key"] = api_key_input
+                        st.session_state["api_key"]  = api_key_input
+                        st.session_state["model"]    = model_input
                         st.session_state.pop("sidebar_test_result", None)
                     else:
                         st.error(T["api_key_invalid"])
