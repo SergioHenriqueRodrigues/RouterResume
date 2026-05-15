@@ -8,6 +8,7 @@ import streamlit.components.v1 as components
 from generate import (
     read_data_md, read_old_resumes,
     build_prompt, call_model, save_docx, save_pdf,
+    validate_job_description,
     OUTPUT_DIR,
 )
 
@@ -62,8 +63,9 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
         st.rerun()
 
     if generate_btn and not is_generating:
-        if not job.strip():
-            st.error(T["no_job_error"])
+        valid, err_key = validate_job_description(job)
+        if not valid:
+            st.error(T[err_key])
         else:
             resolved_key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
             if not resolved_key:

@@ -1,6 +1,9 @@
 # Output files
 output/
 
+# API response cache
+cache/
+
 # Personal data
 data.md
 old_resumes/

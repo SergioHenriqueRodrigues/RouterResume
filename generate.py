@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-import os, sys, json, datetime, textwrap, urllib.request, urllib.error
+import os, sys, json, datetime, textwrap, urllib.request, urllib.error, logging, hashlib
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 try:
     from docx import Document
@@ -24,9 +26,11 @@ BASE_DIR        = Path(__file__).parent
 DATA_MD         = BASE_DIR / "data.md"
 OLD_RESUMES_DIR = BASE_DIR / "old_resumes"
 OUTPUT_DIR      = BASE_DIR / "output"
+CACHE_DIR       = BASE_DIR / "cache"
 MODEL           = "inclusionai/ling-2.6-1t:free"
 OPENROUTER_URL  = "https://openrouter.ai/api/v1/chat/completions"
 OUTPUT_DIR.mkdir(exist_ok=True)
+CACHE_DIR.mkdir(exist_ok=True)
 
 # ── language config ────────────────────────────────────────────────────────────
 
@@ -349,16 +353,56 @@ List ONLY concrete, specific, verifiable technical skills:
 If a skill could appear on ANY professional's resume regardless of their technical area, do NOT include it.
 """
 
+# ── validation ─────────────────────────────────────────────────────────────────
+
+def validate_job_description(text: str) -> tuple:
+    """Returns (is_valid, error_key) where error_key maps to i18n T dict."""
+    stripped = (text or "").strip()
+    if not stripped:
+        return False, "no_job_error"
+    if len(stripped) < 30:
+        return False, "job_too_short"
+    return True, ""
+
+# ── cache ───────────────────────────────────────────────────────────────────────
+
+def _cache_key(prompt: str, model: str) -> str:
+    return hashlib.sha256(f"{model}:{prompt}".encode()).hexdigest()
+
+def _cache_get(key: str):
+    path = CACHE_DIR / f"{key}.json"
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))["response"]
+    except Exception:
+        return None
+
+def _cache_set(key: str, response: str) -> None:
+    path = CACHE_DIR / f"{key}.json"
+    path.write_text(
+        json.dumps({"response": response, "created_at": datetime.datetime.now().isoformat()}),
+        encoding="utf-8",
+    )
+
 # ── API ────────────────────────────────────────────────────────────────────────
 
 def call_model(prompt, model, ui):
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
+        logger.error("OPENROUTER_API_KEY is not set")
         print(f"\n  {ui['api_key_error']}")
         print(f"  {ui['api_key_hint']}")
         print(f"  {ui['api_key_hint2']}\n")
         sys.exit(1)
 
+    key = _cache_key(prompt, model)
+    cached = _cache_get(key)
+    if cached:
+        logger.info("Cache hit — skipping API call (model=%s)", model)
+        return cached
+
+    logger.info("Calling OpenRouter (model=%s)", model)
     print(f"\n  {ui['calling_api']} ({model})...")
     payload = json.dumps({
         "model": model,
@@ -379,12 +423,15 @@ def call_model(prompt, model, ui):
         with urllib.request.urlopen(req, timeout=120) as resp:
             data = json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
-        print(f"\n  {ui['api_error']} ({e.code}): {e.read().decode('utf-8')}")
+        body = e.read().decode("utf-8")
+        logger.error("OpenRouter HTTP %s: %s", e.code, body)
+        print(f"\n  {ui['api_error']} ({e.code}): {body}")
         sys.exit(1)
 
     try:
         content = data["choices"][0]["message"]["content"]
         if not content:
+            logger.error("Model returned empty response (model=%s)", model)
             print(f"\n  {ui['api_empty']}")
             sys.exit(1)
         content = content.strip()
@@ -392,8 +439,11 @@ def call_model(prompt, model, ui):
             lines = content.splitlines()
             lines = [l for l in lines if not l.strip().startswith("```")]
             content = "\n".join(lines).strip()
+        _cache_set(key, content)
+        logger.info("Response cached (model=%s, chars=%d)", model, len(content))
         return content
     except (KeyError, IndexError):
+        logger.error("Unexpected API response structure: %s", json.dumps(data))
         print(f"\n  {ui['api_unexpected']}: {json.dumps(data, indent=2)}")
         sys.exit(1)
 
@@ -401,6 +451,7 @@ def call_model(prompt, model, ui):
 
 def save_docx(text, base_name, lang, ui):
     if not DOCX_OK:
+        logger.warning("python-docx not installed; DOCX output skipped")
         print(f"  {ui['docx_missing']}")
         return None
     h = lang["resume_headers"]
@@ -468,6 +519,7 @@ def save_docx(text, base_name, lang, ui):
 
 def save_pdf(text, base_name, lang, ui):
     if not PDF_OK:
+        logger.warning("reportlab not installed; PDF output skipped")
         print(f"  {ui['pdf_missing']}")
         return None
     h = lang["resume_headers"]
@@ -515,6 +567,11 @@ def save_pdf(text, base_name, lang, ui):
 # ── main ───────────────────────────────────────────────────────────────────────
 
 def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        datefmt="%H:%M:%S",
+    )
 
     # ── 0. System language (first thing asked) ────────────────────────────────
     print("\n" + "═" * 50)
@@ -564,11 +621,16 @@ def main():
             print(f"\n  {ui['job_not_found']}")
             sys.exit(1)
         job_description = job_file.read_text(encoding="utf-8")
+        valid, err_key = validate_job_description(job_description)
+        if not valid:
+            print(f"\n  {ui.get(err_key, ui['job_empty'])}")
+            sys.exit(1)
         print(f"  {ui['job_loaded']} ({len(job_description)} chars)")
     else:
         job_description = ask_multiline(ui["job_paste"], ui)
-        if not job_description:
-            print(f"\n  {ui['job_empty']}")
+        valid, err_key = validate_job_description(job_description)
+        if not valid:
+            print(f"\n  {ui.get(err_key, ui['job_empty'])}")
             sys.exit(1)
         print(f"  {ui['job_received']} ({len(job_description)} chars)")
 
