@@ -80,6 +80,14 @@ def _inject_sidebar_toggle() -> None:
     });
     update();
     setTimeout(update, 800);
+
+    function fixApiKeyInput() {
+      pd.querySelectorAll('input[aria-label="OpenRouter API Key"]').forEach(function(el) {
+        el.setAttribute('autocomplete', 'off');
+      });
+    }
+    new MutationObserver(fixApiKeyInput).observe(pd.documentElement, { childList: true, subtree: true });
+    fixApiKeyInput();
   }
 })();
 </script>
