@@ -203,14 +203,6 @@ def render_sidebar() -> tuple:
             disabled=is_generating,
         )
 
-        model = st.text_input(T["ai_model"], value="", help=T["model_help"], disabled=is_generating)
-        hint = T["model_not_found"] if model else T["model_empty_hint"]
-        st.markdown(
-            f'<div class="model-hint">{hint} '
-            f'<a href="https://openrouter.ai/models?q=free" target="_blank">openrouter.ai/models?q=free</a></div>',
-            unsafe_allow_html=True,
-        )
-
         # ── Seção: API Key ─────────────────────────────────────────────────────
         st.markdown("---")
         _section_label(T["section_api_key"])
@@ -224,6 +216,18 @@ def render_sidebar() -> tuple:
                 disabled=is_generating,
                 label_visibility="collapsed",
             )
+            model_input = st.text_input(
+                T["ai_model"],
+                value=st.session_state.get("model", ""),
+                help=T["model_help"],
+                disabled=is_generating,
+            )
+            hint = T["model_not_found"] if model_input else T["model_empty_hint"]
+            st.markdown(
+                f'<div class="model-hint">{hint} '
+                f'<a href="https://openrouter.ai/models?q=free" target="_blank">openrouter.ai/models?q=free</a></div>',
+                unsafe_allow_html=True,
+            )
             if st.form_submit_button(
                 T["api_key_btn"],
                 use_container_width=True,
@@ -232,12 +236,14 @@ def render_sidebar() -> tuple:
             ):
                 if api_key_input:
                     if validate_api_key(api_key_input):
-                        st.session_state["api_key"] = api_key_input
+                        st.session_state["api_key"]  = api_key_input
+                        st.session_state["model"]    = model_input
                         st.session_state.pop("sidebar_test_result", None)
                     else:
                         st.error(T["api_key_invalid"])
 
         api_key  = st.session_state.get("api_key", "")
+        model    = st.session_state.get("model", "")
         can_test = bool(api_key) and validate_api_key(api_key) and bool(model) and not is_generating
 
         if st.button(
