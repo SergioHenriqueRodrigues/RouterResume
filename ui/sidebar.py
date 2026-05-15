@@ -241,7 +241,6 @@ def render_sidebar() -> tuple:
                 T["api_key_label"],
                 value=st.session_state.get("api_key", ""),
                 type="password",
-                help=T["api_key_help"],
                 disabled=is_generating,
             )
             model_input = st.text_input(
