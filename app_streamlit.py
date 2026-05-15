@@ -6,7 +6,6 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent))
 
 from generate import OLD_RESUMES_DIR, OUTPUT_DIR
-from ui.i18n import UI_STRINGS
 from ui.styles import inject_styles
 from ui.sidebar import render_sidebar
 from ui.tabs.tab_how_to import render_tab_how_to

@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from ui.i18n import UI_STRINGS
-from generate import LANGUAGES, read_data_md, read_old_resumes, MODEL, validate_api_key
+from generate import LANGUAGES, read_data_md, read_old_resumes, validate_api_key
 
 
 def _inject_sidebar_toggle() -> None:
