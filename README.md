@@ -46,7 +46,7 @@ RouterResume/
 │       ├── tab_history.py  ← Histórico
 │       ├── tab_resumes.py  ← Currículos de referência
 │       ├── tab_data.py     ← Dados do perfil
-│       └── tab_how_to.py   ← Conteúdo "Como usar" (expander na sidebar)
+│       └── tab_how_to.py   ← Conteúdo "Como usar"
 │
 ├── 📁 old_resumes/         ← seus currículos antigos (.pdf, .docx, .txt, .md)
 └── 📁 output/              ← currículos gerados ficam aqui
@@ -194,7 +194,7 @@ RouterResume/
 │       ├── tab_history.py  ← History
 │       ├── tab_resumes.py  ← Reference resumes
 │       ├── tab_data.py     ← Profile data
-│       └── tab_how_to.py   ← "How to use" content (sidebar expander)
+│       └── tab_how_to.py   ← "How to use" content 
 │
 ├── 📁 old_resumes/         ← your old resumes (.pdf, .docx, .txt, .md)
 └── 📁 output/              ← generated resumes saved here
