@@ -1,6 +1,7 @@
 import base64
 import datetime
 import os
+import time
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -20,7 +21,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
 
     has_data     = bool(raw_data.strip())
     has_resumes  = n_resumes > 0
-    can_generate = has_data and has_resumes
+    can_generate = has_data
 
     is_generating = st.session_state.get("is_generating", False)
 
@@ -37,7 +38,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
     elif not has_data:
         st.warning(T["no_data_error"])
     elif not has_resumes:
-        st.warning(T["no_resumes_error"])
+        st.info(T["no_resumes_hint"])
 
     col1, col2, _ = st.columns([2, 1, 1])
     with col1:
@@ -85,11 +86,14 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
         with st.status(T["status_generating"], expanded=True) as status:
             st.write(T["status_reading"].format(chars=len(raw_data)))
             st.write(T["status_resumes"].format(n=n_resumes))
-            st.write(T["status_calling"].format(model=model))
 
             try:
-                prompt = build_prompt(raw_data, old_resumes_text, job_text, lang)
-                resume = call_model(prompt, model)
+                prompt   = build_prompt(raw_data, old_resumes_text, job_text, lang)
+                progress = st.progress(0, text=T["status_calling"].format(model=model))
+                start    = time.time()
+                resume   = call_model(prompt, model)
+                elapsed  = round(time.time() - start)
+                progress.progress(100, text=T["status_elapsed"].format(secs=elapsed))
 
                 ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
                 base_name = f"routerresume_{ts}"
@@ -111,10 +115,6 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                 st.session_state["resume_text"]   = resume
                 st.session_state["saved_paths"]   = saved_paths
 
-            except SystemExit:
-                st.session_state["is_generating"] = False
-                status.update(label=T["status_title_fail"], state="error")
-                st.error(T["api_fail"])
             except Exception as e:
                 st.session_state["is_generating"] = False
                 status.update(label=T["status_title_fail"], state="error")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, json, datetime, urllib.request, urllib.error, logging, hashlib
+import os, json, datetime, time, urllib.request, urllib.error, logging, hashlib
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -223,8 +223,7 @@ def _cache_set(key: str, response: str) -> None:
 def call_model(prompt, model):
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
-        logger.error("OPENROUTER_API_KEY is not set")
-        sys.exit(1)
+        raise RuntimeError("OPENROUTER_API_KEY not set")
 
     key = _cache_key(prompt, model)
     cached = _cache_get(key)
@@ -248,19 +247,34 @@ def call_model(prompt, model):
             "X-Title": "ATS Resume Generator",
         }, method="POST"
     )
-    try:
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8")
-        logger.error("OpenRouter HTTP %s: %s", e.code, body)
-        sys.exit(1)
+
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8")
+            if e.code == 429 and attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                logger.warning("Rate limited, retrying in %ds (attempt %d/%d)", wait, attempt + 1, max_retries)
+                time.sleep(wait)
+                continue
+            logger.error("OpenRouter HTTP %s: %s", e.code, body)
+            raise RuntimeError(f"HTTP {e.code}: {body}")
+        except urllib.error.URLError as e:
+            if attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                logger.warning("Network error, retrying in %ds: %s", wait, e)
+                time.sleep(wait)
+                continue
+            raise RuntimeError(f"Network error: {e}")
 
     try:
         content = data["choices"][0]["message"]["content"]
         if not content:
-            logger.error("Model returned empty response (model=%s)", model)
-            sys.exit(1)
+            raise RuntimeError("Model returned an empty response — try a different model")
         content = content.strip()
         if content.startswith("```"):
             lines = content.splitlines()
@@ -271,7 +285,7 @@ def call_model(prompt, model):
         return content
     except (KeyError, IndexError):
         logger.error("Unexpected API response structure: %s", json.dumps(data))
-        sys.exit(1)
+        raise RuntimeError("Unexpected API response structure")
 
 # ── savers ─────────────────────────────────────────────────────────────────────
 
