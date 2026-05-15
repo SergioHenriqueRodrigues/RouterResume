@@ -8,7 +8,7 @@ Na **barra lateral**, cole sua chave do OpenRouter (`sk-or-...`) e clique em **S
 
 > Não tem chave? Crie grátis em [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (sem cartão de crédito).
 
-Use a aba **Testar Key** para confirmar que a chave e o modelo estão funcionando antes de gerar.
+Use o botão **Testar conexão** na barra lateral para confirmar que a chave e o modelo estão funcionando antes de gerar.
 
 ---
 
@@ -62,7 +62,7 @@ In the **sidebar**, paste your OpenRouter key (`sk-or-...`) and click **Save key
 
 > No key yet? Create one for free at [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (no credit card needed).
 
-Use the **Test Key** tab to confirm your key and model are working before generating.
+Use the **Test connection** button in the sidebar to confirm your key and model are working before generating.
 
 ---
 
@@ -116,7 +116,7 @@ En la **barra lateral**, pega tu clave de OpenRouter (`sk-or-...`) y haz clic en
 
 > ¿No tienes clave? Créala gratis en [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (sin tarjeta de crédito).
 
-Usa la pestaña **Probar Key** para confirmar que tu clave y modelo funcionan antes de generar.
+Usa el botón **Probar conexión** en la barra lateral para confirmar que tu clave y modelo funcionan antes de generar.
 
 ---
 

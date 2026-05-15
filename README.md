@@ -9,7 +9,6 @@ Gera currículos ATS otimizados para vagas específicas a partir dos seus dados 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Interface-Streamlit-red?logo=streamlit&logoColor=white)](https://streamlit.io)
 [![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-purple)](https://openrouter.ai)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Free](https://img.shields.io/badge/Custo-Gratuito-brightgreen)](https://openrouter.ai)
 
 </div>
@@ -43,11 +42,11 @@ RouterResume/
 │   ├── i18n.py
 │   ├── styles.py
 │   └── tabs/
-│       ├── tab_how_to.py   ← Como usar
 │       ├── tab_generate.py ← Gerar currículo
-│       ├── tab_resumes.py  ← Currículos antigos
+│       ├── tab_history.py  ← Histórico
+│       ├── tab_resumes.py  ← Currículos de referência
 │       ├── tab_data.py     ← Dados do perfil
-│       └── tab_test_key.py ← Testar API Key
+│       └── tab_how_to.py   ← Conteúdo "Como usar" (expander na sidebar)
 │
 ├── 📁 old_resumes/         ← seus currículos antigos (.pdf, .docx, .txt, .md)
 └── 📁 output/              ← currículos gerados ficam aqui
@@ -79,15 +78,14 @@ O browser abre automaticamente em `http://localhost:8501`.
 
 ## Como usar
 
-A interface é organizada em **5 abas**:
+A interface é organizada em **4 abas**:
 
 | Aba | Função |
 |-----|--------|
-| 📖 Como usar | Este guia |
 | 🚀 Gerar | Gerar o currículo a partir de uma vaga |
-| 📁 Currículos Antigos | Enviar currículos anteriores para contexto |
+| 🕐 Histórico | Ver e baixar currículos já gerados |
 | 👤 Dados do Perfil | Editar seus dados brutos (`data.md`) |
-| 🔑 Testar Key | Testar se a API Key e o modelo estão funcionando |
+| 📁 Currículos de Referência | Enviar currículos anteriores para contexto |
 
 ### Passo 1 — Configure sua API Key
 
@@ -95,7 +93,7 @@ Na **barra lateral**, cole sua chave do OpenRouter (`sk-or-...`) e clique em **S
 
 > Não tem chave? Crie grátis em [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (sem cartão de crédito).
 
-Use a aba **🔑 Testar Key** para confirmar que está funcionando.
+Use o botão **Testar conexão** na barra lateral para confirmar que a chave e o modelo estão funcionando.
 
 ### Passo 2 — Adicione seus dados de perfil
 
@@ -159,7 +157,6 @@ Generates ATS-optimized resumes for specific job postings from your raw data, us
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Interface-Streamlit-red?logo=streamlit&logoColor=white)](https://streamlit.io)
 [![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-purple)](https://openrouter.ai)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Free](https://img.shields.io/badge/Cost-Free-brightgreen)](https://openrouter.ai)
 
 </div>
@@ -193,11 +190,11 @@ RouterResume/
 │   ├── i18n.py
 │   ├── styles.py
 │   └── tabs/
-│       ├── tab_how_to.py   ← How to use
 │       ├── tab_generate.py ← Generate resume
-│       ├── tab_resumes.py  ← Old resumes
+│       ├── tab_history.py  ← History
+│       ├── tab_resumes.py  ← Reference resumes
 │       ├── tab_data.py     ← Profile data
-│       └── tab_test_key.py ← Test API Key
+│       └── tab_how_to.py   ← "How to use" content (sidebar expander)
 │
 ├── 📁 old_resumes/         ← your old resumes (.pdf, .docx, .txt, .md)
 └── 📁 output/              ← generated resumes saved here
@@ -229,15 +226,14 @@ The browser opens automatically at `http://localhost:8501`.
 
 ## How to use
 
-The interface is organized into **5 tabs**:
+The interface is organized into **4 tabs**:
 
 | Tab | Purpose |
 |-----|---------|
-| 📖 How to use | This guide |
 | 🚀 Generate | Generate a resume from a job posting |
-| 📁 Old Resumes | Upload previous resumes for context |
+| 🕐 History | View and download previously generated resumes |
 | 👤 Profile Data | Edit your raw data (`data.md`) |
-| 🔑 Test Key | Test whether your API Key and model are working |
+| 📁 Reference Resumes | Upload previous resumes for context |
 
 ### Step 1 — Set up your API Key
 
@@ -245,7 +241,7 @@ In the **sidebar**, paste your OpenRouter key (`sk-or-...`) and click **Save key
 
 > No key yet? Create one for free at [openrouter.ai](https://openrouter.ai) → **Keys** → **Create Key** (no credit card needed).
 
-Use the **🔑 Test Key** tab to confirm it's working.
+Use the **Test connection** button in the sidebar to confirm your key and model are working.
 
 ### Step 2 — Add your profile data
 
