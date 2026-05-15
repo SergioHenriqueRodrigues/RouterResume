@@ -202,9 +202,10 @@ def render_sidebar() -> tuple[str, str, str, str]:
             disabled=is_generating,
         )
 
-        model = st.text_input(T["ai_model"], value=MODEL, help=T["model_help"], disabled=is_generating)
+        model = st.text_input(T["ai_model"], value="", help=T["model_help"], disabled=is_generating)
+        hint = T["model_not_found"] if model else T["model_empty_hint"]
         st.markdown(
-            f'<div class="model-hint">{T["model_not_found"]} '
+            f'<div class="model-hint">{hint} '
             f'<a href="https://openrouter.ai/models?q=free" target="_blank">openrouter.ai/models?q=free</a></div>',
             unsafe_allow_html=True,
         )

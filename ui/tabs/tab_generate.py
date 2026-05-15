@@ -21,7 +21,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
 
     has_data     = bool(raw_data.strip())
     has_resumes  = n_resumes > 0
-    can_generate = has_data
+    can_generate = has_data and bool(model)
 
     is_generating = st.session_state.get("is_generating", False)
 
