@@ -1,9 +1,9 @@
 UI_STRINGS = {
     "pt": {
         "title": "RouterResume",
-        "section_generation": "⚙️ Geração",
-        "section_api_key": "🔑 API Key",
-        "how_to_expander": "❓ Como usar",
+        "section_generation": "Geração",
+        "section_api_key": "API Key",
+        "how_to_expander": "Como usar",
         "profile_chars": "{chars:,} caracteres",
         "profile_saved_at": "salvo {date}",
         "resume_language": "Idioma do currículo",
@@ -88,9 +88,9 @@ UI_STRINGS = {
     },
     "en": {
         "title": "RouterResume",
-        "section_generation": "⚙️ Generation",
-        "section_api_key": "🔑 API Key",
-        "how_to_expander": "❓ How to use",
+        "section_generation": "Generation",
+        "section_api_key": "API Key",
+        "how_to_expander": "How to use",
         "profile_chars": "{chars:,} chars",
         "profile_saved_at": "saved {date}",
         "resume_language": "Resume language",
@@ -175,9 +175,9 @@ UI_STRINGS = {
     },
     "es": {
         "title": "RouterResume",
-        "section_generation": "⚙️ Generación",
-        "section_api_key": "🔑 API Key",
-        "how_to_expander": "❓ Cómo usar",
+        "section_generation": "Generación",
+        "section_api_key": "API Key",
+        "how_to_expander": "Cómo usar",
         "profile_chars": "{chars:,} caracteres",
         "profile_saved_at": "guardado {date}",
         "resume_language": "Idioma del currículum",

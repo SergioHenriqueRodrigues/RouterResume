@@ -86,10 +86,39 @@ def _inject_sidebar_toggle() -> None:
 """, height=0)
 
 
-def _section_label(text: str) -> None:
+_ICON_SLIDERS = (
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
+    '<line x1="4" y1="6" x2="20" y2="6"/>'
+    '<line x1="4" y1="12" x2="20" y2="12"/>'
+    '<line x1="4" y1="18" x2="20" y2="18"/>'
+    '<circle cx="9" cy="6" r="2.5" fill="currentColor" stroke="none"/>'
+    '<circle cx="16" cy="12" r="2.5" fill="currentColor" stroke="none"/>'
+    '<circle cx="11" cy="18" r="2.5" fill="currentColor" stroke="none"/>'
+    '</svg>'
+)
+_ICON_KEY = (
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
+    '<circle cx="7.5" cy="15.5" r="4.5"/>'
+    '<path d="M11.3 11.7L20 3"/>'
+    '<path d="M18 5l2 2"/>'
+    '<path d="M15 8l2 2"/>'
+    '</svg>'
+)
+
+
+def _section_label(text: str, icon: str = "") -> None:
+    icon_html = (
+        f'<span style="display:inline-flex;align-items:center;color:var(--text-muted)">{icon}</span>'
+        if icon else ""
+    )
     st.markdown(
-        f'<p style="font-size:0.70rem;font-weight:700;text-transform:uppercase;'
-        f'letter-spacing:0.08em;color:var(--text-muted);margin:16px 0 4px 0">{text}</p>',
+        f'<div style="display:flex;align-items:center;gap:6px;margin:28px 0 10px 0">'
+        f'{icon_html}'
+        f'<span style="font-size:0.70rem;font-weight:700;text-transform:uppercase;'
+        f'letter-spacing:0.08em;color:var(--text-muted)">{text}</span>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -184,7 +213,7 @@ def render_sidebar() -> tuple:
 
         # ── Seção: Geração ─────────────────────────────────────────────────────
         st.markdown("---")
-        _section_label(T["section_generation"])
+        _section_label(T["section_generation"], _ICON_SLIDERS)
 
         lang_labels = {"1": "🇧🇷 Português (Brasil)", "2": "🇺🇸 English", "3": "🇪🇸 Español"}
         lang_choice = st.selectbox(
@@ -205,7 +234,7 @@ def render_sidebar() -> tuple:
 
         # ── Seção: API Key ─────────────────────────────────────────────────────
         st.markdown("---")
-        _section_label(T["section_api_key"])
+        _section_label(T["section_api_key"], _ICON_KEY)
 
         with st.form("api_key_form", border=False):
             api_key_input = st.text_input(
@@ -214,7 +243,6 @@ def render_sidebar() -> tuple:
                 type="password",
                 help=T["api_key_help"],
                 disabled=is_generating,
-                label_visibility="collapsed",
             )
             model_input = st.text_input(
                 T["ai_model"],
