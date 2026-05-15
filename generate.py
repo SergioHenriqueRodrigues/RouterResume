@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, json, datetime, time, urllib.request, urllib.error, logging, hashlib
+import os, re, json, datetime, time, urllib.request, urllib.error, logging, hashlib, unicodedata
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -175,7 +175,31 @@ List ONLY concrete, specific, verifiable technical skills:
      - Vague tools: "Microsoft Office", "Google Docs", "email", "Slack"
 
 If a skill could appear on ANY professional's resume regardless of their technical area, do NOT include it.
+
+=== FILENAME ===
+After the complete resume, output exactly one final line:
+FILENAME: <suggested_filename>
+Rules: lowercase, underscores for spaces, ASCII letters/numbers only, max 40 chars, no extension.
+Capture the role and company from the job description.
+Example — FILENAME: senior_backend_engineer_meta
 """
+
+def extract_filename(text: str) -> tuple:
+    """Parse FILENAME: line from the end of the AI response.
+
+    Returns (clean_resume_text, slug). slug is empty string if not found.
+    """
+    lines = text.rstrip().splitlines()
+    for i in range(len(lines) - 1, max(len(lines) - 8, -1), -1):
+        m = re.match(r"^FILENAME:\s*(.+)$", lines[i].strip(), re.IGNORECASE)
+        if m:
+            raw = m.group(1).strip()
+            normalized = unicodedata.normalize("NFKD", raw.lower())
+            ascii_str  = normalized.encode("ascii", "ignore").decode("ascii")
+            slug = re.sub(r"[^\w]+", "_", ascii_str).strip("_")[:40]
+            clean = "\n".join(lines[:i]).rstrip()
+            return clean, slug
+    return text, ""
 
 # ── validation ─────────────────────────────────────────────────────────────────
 

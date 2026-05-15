@@ -1,10 +1,8 @@
 import base64
 import datetime
 import os
-import re
 import threading
 import time
-import unicodedata
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -12,30 +10,9 @@ import streamlit.components.v1 as components
 from generate import (
     read_data_md, read_old_resumes,
     build_prompt, call_model, save_docx, save_pdf,
-    validate_job_description,
+    validate_job_description, extract_filename,
     OUTPUT_DIR,
 )
-
-
-_GENERIC_LINE = re.compile(
-    r"^(about|sobre|acerca\s+de|job\s+desc|descri[çc][aã]o|description|"
-    r"responsibilities|responsabilidades|requirements|requisitos|"
-    r"overview|sum[aá]rio|summary|oferta|puesto|vaga|cargo|role|position|"
-    r"we\s+are|we'?re|our\s+team|nossa\s+empresa|nuestra\s+empresa)",
-    re.IGNORECASE,
-)
-
-def _job_slug(job_text: str) -> str:
-    for raw in job_text.splitlines():
-        line = re.sub(r"[#*_`|]", "", raw).strip()  # strip markdown
-        if not line or _GENERIC_LINE.match(line) or len(line) > 80:
-            continue
-        normalized = unicodedata.normalize("NFKD", line.lower())
-        ascii_str  = normalized.encode("ascii", "ignore").decode("ascii")
-        slug       = re.sub(r"[^\w\s]", "", ascii_str)
-        slug       = re.sub(r"\s+", "_", slug).strip("_")
-        return slug[:40] or "resume"
-    return "resume"
 
 
 def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) -> None:
@@ -154,10 +131,10 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
 
                 elapsed = round(time.time() - start)
                 progress.progress(100, text=T["status_elapsed"].format(secs=elapsed))
-                resume  = _result[0]
 
+                resume, ai_slug = extract_filename(_result[0])
                 ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
-                base_name = f"{_job_slug(job_text)}_{ts}"
+                base_name = f"{ai_slug or 'resume'}_{ts}"
 
                 saved_paths = []
                 if fmt in ("docx", "all"):
