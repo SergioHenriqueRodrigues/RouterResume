@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from ui.i18n import UI_STRINGS
-from generate import LANGUAGES, read_data_md, read_old_resumes, MODEL
+from generate import LANGUAGES, read_data_md, read_old_resumes, MODEL, validate_api_key
 
 
 def _inject_sidebar_toggle() -> None:
@@ -219,7 +219,10 @@ def render_sidebar() -> tuple[str, str, str, str]:
             )
             if st.form_submit_button(T["api_key_btn"], use_container_width=True, icon=":material/save:", disabled=is_generating):
                 if api_key_input:
-                    st.session_state["api_key"] = api_key_input
+                    if validate_api_key(api_key_input):
+                        st.session_state["api_key"] = api_key_input
+                    else:
+                        st.error(T["api_key_invalid"])
 
         api_key = st.session_state.get("api_key", "")
 

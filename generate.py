@@ -188,6 +188,15 @@ def validate_job_description(text: str) -> tuple:
         return False, "job_too_short"
     return True, ""
 
+def validate_api_key(key: str) -> bool:
+    return bool(key) and key.strip().startswith("sk-or-") and len(key.strip()) > 10
+
+def mask_api_key(key: str) -> str:
+    key = key.strip()
+    if len(key) <= 4:
+        return "****"
+    return f"****...{key[-4:]}"
+
 # ── cache ───────────────────────────────────────────────────────────────────────
 
 def _cache_key(prompt: str, model: str) -> str:

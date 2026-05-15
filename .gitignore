@@ -24,6 +24,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.tmp
+*.tmp.*
 
 # Environment files (just in case)
 .env
