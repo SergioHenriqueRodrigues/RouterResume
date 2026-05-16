@@ -10,6 +10,21 @@ from ui.tabs.tab_how_to import _CONTENT as _HOW_TO_CONTENT
 from generate import LANGUAGES, read_data_md, read_old_resumes, validate_api_key
 
 
+@st.dialog("Como usar", width="large")
+def _show_how_to_modal_pt() -> None:
+    st.markdown(_HOW_TO_CONTENT.get("pt", _HOW_TO_CONTENT["en"]))
+
+
+@st.dialog("How to use", width="large")
+def _show_how_to_modal_en() -> None:
+    st.markdown(_HOW_TO_CONTENT.get("en", _HOW_TO_CONTENT["en"]))
+
+
+@st.dialog("Cómo usar", width="large")
+def _show_how_to_modal_es() -> None:
+    st.markdown(_HOW_TO_CONTENT.get("es", _HOW_TO_CONTENT["en"]))
+
+
 def _inject_sidebar_toggle() -> None:
     """Inject custom open/close sidebar buttons via JS."""
     components.html("""
@@ -178,6 +193,24 @@ def render_sidebar() -> tuple:
     is_generating = st.session_state.get("is_generating", False)
 
     with st.sidebar:
+        # ── Usuário logado ─────────────────────────────────────────────────────
+        user = st.session_state.get("user")
+        if user:
+            email = getattr(user, "email", "") or ""
+            col_email, col_logout = st.columns([4, 1])
+            with col_email:
+                st.caption(f"{T['auth_logged_as']} **{email}**")
+            with col_logout:
+                if st.button("", icon=":material/logout:", help=T["auth_logout"], key="logout_btn"):
+                    from supabase_client import get_supabase
+                    from ui.auth import clear_user_session
+                    try:
+                        get_supabase().auth.sign_out()
+                    except Exception:
+                        pass
+                    clear_user_session()
+                    st.rerun()
+
         # ── Título + idioma da UI / tema ───────────────────────────────────────
         st.markdown(
             f'<p style="font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);'
@@ -185,7 +218,7 @@ def render_sidebar() -> tuple:
             unsafe_allow_html=True,
         )
 
-        col_lang, col_theme, _ = st.columns([3, 2, 1])
+        col_lang, col_theme, col_help = st.columns([3, 2, 1], vertical_alignment="center")
         with col_lang:
             ui_lang_options = {"pt": "🇧🇷 Português", "en": "🇺🇸 English", "es": "🇪🇸 Español"}
             selected_lang = st.selectbox(
@@ -218,6 +251,15 @@ def render_sidebar() -> tuple:
             if selected_theme != ui_theme:
                 st.session_state["ui_theme"] = selected_theme
                 st.rerun()
+
+        with col_help:
+            if st.button("", icon=":material/help:", help=T["how_to_expander"], key="how_to_btn"):
+                if ui_lang == "en":
+                    _show_how_to_modal_en()
+                elif ui_lang == "es":
+                    _show_how_to_modal_es()
+                else:
+                    _show_how_to_modal_pt()
 
         # ── Seção: Geração ─────────────────────────────────────────────────────
         st.markdown("---")
@@ -271,9 +313,16 @@ def render_sidebar() -> tuple:
             ):
                 if api_key_input:
                     if validate_api_key(api_key_input):
-                        st.session_state["api_key"]  = api_key_input
-                        st.session_state["model"]    = model_input
+                        st.session_state["api_key"] = api_key_input
+                        st.session_state["model"]   = model_input
                         st.session_state.pop("sidebar_test_result", None)
+                        user = st.session_state.get("user")
+                        if user:
+                            from db.profiles import save_api_settings
+                            try:
+                                save_api_settings(user.id, api_key_input, model_input)
+                            except Exception:
+                                pass
                     else:
                         st.error(T["api_key_invalid"])
 
@@ -300,9 +349,13 @@ def render_sidebar() -> tuple:
 
         # ── Status ─────────────────────────────────────────────────────────────
         st.markdown("---")
-        raw_data         = read_data_md()
-        old_resumes_text = read_old_resumes()
-        n_resumes        = old_resumes_text.count("[Resume:")
+        if st.session_state.get("user"):
+            raw_data  = st.session_state.get("profile_data", "")
+            n_resumes = len(st.session_state.get("ref_resumes", []))
+        else:
+            raw_data         = read_data_md()
+            old_resumes_text = read_old_resumes()
+            n_resumes        = old_resumes_text.count("[Resume:")
 
         if raw_data.strip():
             st.markdown(
@@ -325,10 +378,5 @@ def render_sidebar() -> tuple:
                 f'<div class="status-warn">{T["status_warn_resumes"]}</div>',
                 unsafe_allow_html=True,
             )
-
-        # ── Como usar (expander) ───────────────────────────────────────────────
-        st.markdown("---")
-        with st.expander(T["how_to_expander"], expanded=False):
-            st.markdown(_HOW_TO_CONTENT.get(ui_lang, _HOW_TO_CONTENT["en"]))
 
     return lang, fmt, model, api_key, T

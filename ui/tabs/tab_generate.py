@@ -13,12 +13,30 @@ from generate import (
     validate_job_description, extract_filename,
     OUTPUT_DIR,
 )
+from db.generations import save_generation
+
+
+def _build_old_resumes_text_from_cache() -> str:
+    ref_resumes = st.session_state.get("ref_resumes", [])
+    parts = [
+        f"[Resume: {r['filename']}]\n{r['file_text']}"
+        for r in ref_resumes
+        if r.get("file_text", "").strip()
+    ]
+    return "\n\n---\n\n".join(parts)
 
 
 def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) -> None:
-    raw_data         = read_data_md()
-    old_resumes_text = read_old_resumes()
-    n_resumes        = old_resumes_text.count("[Resume:")
+    user = st.session_state.get("user")
+
+    if user:
+        raw_data         = st.session_state.get("profile_data", "")
+        old_resumes_text = _build_old_resumes_text_from_cache()
+        n_resumes        = len(st.session_state.get("ref_resumes", []))
+    else:
+        raw_data         = read_data_md()
+        old_resumes_text = read_old_resumes()
+        n_resumes        = old_resumes_text.count("[Resume:")
 
     has_data     = bool(raw_data.strip())
     has_resumes  = n_resumes > 0
@@ -149,6 +167,20 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                 st.session_state["is_generating"] = False
                 st.session_state["resume_text"]   = resume
                 st.session_state["saved_paths"]   = saved_paths
+
+                if user and saved_paths:
+                    try:
+                        save_generation(
+                            user_id=user.id,
+                            job_description=job_text,
+                            resume_text=resume,
+                            model=model,
+                            filename=base_name,
+                            saved_paths=saved_paths,
+                        )
+                    except Exception:
+                        pass  # don't break the UI if cloud save fails
+
                 st.rerun()
 
             except Exception as e:

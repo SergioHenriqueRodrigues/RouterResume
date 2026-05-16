@@ -1,3 +1,4 @@
+import base64
 import re
 from datetime import datetime
 
@@ -5,12 +6,16 @@ import streamlit as st
 
 from generate import OUTPUT_DIR
 from ui.components import render_file_card
+from db.generations import get_generations, get_generation_files, delete_generation
 
 _ALLOWED = {".pdf", ".docx"}
+_MIME = {
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "pdf": "application/pdf",
+}
 
 
 def _parse_stem(stem: str) -> tuple[str, str]:
-    """Return (display_name, date_str) from a filename stem."""
     m = re.search(r"(\d{8})_(\d{4})", stem)
     if m:
         raw_name = stem[: m.start()].rstrip("_").replace("_", " ").title() or stem
@@ -22,9 +27,68 @@ def _parse_stem(stem: str) -> tuple[str, str]:
     return stem, ""
 
 
-def render_tab_history(T: dict) -> None:
-    st.markdown(f"### {T['history_title']}")
+def _render_cloud_history(T: dict) -> None:
+    user = st.session_state["user"]
+    rows = get_generations(user.id)
 
+    if not rows:
+        st.info(T["history_empty"])
+        return
+
+    for row in rows:
+        gen_id   = row["id"]
+        filename = row.get("filename") or "resume"
+        model    = row.get("model") or ""
+        created  = row.get("created_at", "")
+        try:
+            dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+            date_str = dt.strftime("%d/%m/%Y  %H:%M")
+        except Exception:
+            date_str = created[:16] if created else ""
+
+        display_name, _ = _parse_stem(filename)
+        subtitle = f"{date_str} · {model}" if model else date_str
+
+        with st.container(border=True):
+            col_info, col_dl, col_del = st.columns([5, 2, 1])
+
+            with col_info:
+                st.markdown(
+                    f'<p style="margin:0;line-height:1.35">'
+                    f'<span class="file-name">{display_name}</span>'
+                    f'<span class="file-size" style="margin-left:6px">· {subtitle}</span>'
+                    f'</p>',
+                    unsafe_allow_html=True,
+                )
+
+            with col_dl:
+                files_data = get_generation_files(gen_id)
+                btns = []
+                if files_data.get("file_docx"):
+                    btns.append(("DOCX", base64.b64decode(files_data["file_docx"]), "docx"))
+                if files_data.get("file_pdf"):
+                    btns.append(("PDF", base64.b64decode(files_data["file_pdf"]), "pdf"))
+
+                if btns:
+                    dl_cols = st.columns(len(btns))
+                    for bc, (label, data, ext) in zip(dl_cols, btns):
+                        with bc:
+                            st.download_button(
+                                label=label,
+                                data=data,
+                                file_name=f"{filename}.{ext}",
+                                mime=_MIME[ext],
+                                use_container_width=True,
+                                key=f"dl_{gen_id}_{ext}",
+                            )
+
+            with col_del:
+                if st.button("", key=f"del_{gen_id}", icon=":material/delete:", help=T["history_delete_help"]):
+                    delete_generation(gen_id)
+                    st.rerun()
+
+
+def _render_local_history(T: dict) -> None:
     if not OUTPUT_DIR.exists():
         st.info(T["history_empty"])
         return
@@ -38,14 +102,12 @@ def render_tab_history(T: dict) -> None:
         st.info(T["history_empty"])
         return
 
-    # group by stem, sorted newest first by mtime
     groups: dict[str, list] = {}
     for f in sorted(files, key=lambda x: x.stat().st_mtime, reverse=True):
         groups.setdefault(f.stem, []).append(f)
 
     for stem, group_files in groups.items():
         name, date_str = _parse_stem(stem)
-
         if render_file_card(
             display_name=name,
             subtitle=date_str,
@@ -57,3 +119,11 @@ def render_tab_history(T: dict) -> None:
                 if f.exists():
                     f.unlink()
             st.rerun()
+
+
+def render_tab_history(T: dict) -> None:
+    st.markdown(f"### {T['history_title']}")
+    if st.session_state.get("user"):
+        _render_cloud_history(T)
+    else:
+        _render_local_history(T)
