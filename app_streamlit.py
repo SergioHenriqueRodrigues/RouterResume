@@ -18,6 +18,7 @@ from ui.tabs.tab_resumes import render_tab_resumes
 from ui.i18n import UI_STRINGS
 from ui.auth import render_auth
 from supabase_client import restore_session
+from streamlit_cookies_controller import CookieController
 from db.profiles import get_profile_data
 from db.reference_resumes import get_reference_resumes
 
@@ -41,15 +42,38 @@ st.set_page_config(
 # ── styles ─────────────────────────────────────────────────────────────────────
 inject_styles(st.session_state["ui_theme"])
 
-# ── restore session if tokens exist ───────────────────────────────────────────
-if "access_token" in st.session_state and "user" not in st.session_state:
-    ok = restore_session(
-        st.session_state["access_token"],
-        st.session_state.get("refresh_token", ""),
-    )
-    if not ok:
-        st.session_state.pop("access_token", None)
-        st.session_state.pop("refresh_token", None)
+# ── cookie manager ─────────────────────────────────────────────────────────────
+# True only on the very first render — cookies haven't been read from the browser yet
+_cookies_loading = "cookies" not in st.session_state
+_cookie = CookieController()
+
+# Clear cookies when logout is triggered
+if st.session_state.pop("_clear_cookies", False):
+    _cookie.remove("rr_at")
+    _cookie.remove("rr_rt")
+
+# Restore session from cookies after page refresh
+if "user" not in st.session_state:
+    _at = _cookie.get("rr_at")
+    _rt = _cookie.get("rr_rt")
+    if _at and _rt:
+        result = restore_session(_at, _rt)
+        if result:
+            _user, _at_new, _rt_new = result
+            st.session_state["user"] = _user
+            st.session_state["access_token"] = _at_new
+            st.session_state["refresh_token"] = _rt_new
+        else:
+            _cookie.remove("rr_at")
+            _cookie.remove("rr_rt")
+
+# Save tokens to cookies after fresh login (rerun so main app only renders after cookies are saved)
+if (st.session_state.get("user")
+        and st.session_state.get("access_token")
+        and not _cookie.get("rr_at")):
+    _cookie.set("rr_at", st.session_state["access_token"], max_age=2592000)
+    _cookie.set("rr_rt", st.session_state["refresh_token"], max_age=2592000)
+    st.rerun()
 
 # ── load cloud data after login (once per session) ────────────────────────────
 if st.session_state.get("user") and "profile_data" not in st.session_state:
@@ -59,6 +83,9 @@ if st.session_state.get("user") and "profile_data" not in st.session_state:
 
 # ── auth gate ──────────────────────────────────────────────────────────────────
 if not st.session_state.get("user"):
+    if _cookies_loading:
+        # First render: wait for cookie component to report back before showing auth
+        st.stop()
     lang = st.session_state.get("ui_lang", "pt")
     T = UI_STRINGS[lang]
     render_auth(T)

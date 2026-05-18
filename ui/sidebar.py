@@ -208,6 +208,7 @@ def render_sidebar() -> tuple:
                         get_supabase().auth.sign_out()
                     except Exception:
                         pass
+                    st.session_state["_clear_cookies"] = True
                     clear_user_session()
                     st.rerun()
 

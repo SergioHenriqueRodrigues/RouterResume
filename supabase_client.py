@@ -15,9 +15,12 @@ def get_supabase() -> Client:
     return _client
 
 
-def restore_session(access_token: str, refresh_token: str) -> bool:
+def restore_session(access_token: str, refresh_token: str):
+    """Returns (user, access_token, refresh_token) on success, None on failure."""
     try:
-        get_supabase().auth.set_session(access_token, refresh_token)
-        return True
+        res = get_supabase().auth.set_session(access_token, refresh_token)
+        if res and res.user and res.session:
+            return res.user, res.session.access_token, res.session.refresh_token
+        return None
     except Exception:
-        return False
+        return None
