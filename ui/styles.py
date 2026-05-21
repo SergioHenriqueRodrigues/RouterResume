@@ -3,12 +3,13 @@ import streamlit as st
 THEME_CSS = {
     "light": """
         :root {
-            --bg: #FAFAF8; --surface: #F0EDE8; --border: #E8E4DE;
+            --bg: #EDEBE6; --surface: #E4E0D9; --border: #CEC8BF;
             --text: #1A1814; --text-muted: #555; --text-faint: #aaa;
-            --card-bg: #F0EDE8; --card-border: #C8C2BA;
-            --preview-bg: #FDFCFA; --preview-border: #E0DBD4;
+            --card-bg: #E4E0D9; --card-border: #BCB5AB;
+            --preview-bg: #F2EFE9; --preview-border: #D4CEC6;
             --status-ok-bg: #EDFBF3; --status-ok-border: #A8DFBB; --status-ok-text: #1E6B3E;
             --status-warn-bg: #FFF8EC; --status-warn-border: #F5C97A; --status-warn-text: #7A4E00;
+            --btn-hover-bg: #3A3530; --btn-hover-text: #F0EDE8;
         }
     """,
     "dark": """
@@ -19,16 +20,18 @@ THEME_CSS = {
             --preview-bg: #1E1C18; --preview-border: #3A342C;
             --status-ok-bg: #0D2B1A; --status-ok-border: #2A6B40; --status-ok-text: #6FDFAA;
             --status-warn-bg: #2B1E00; --status-warn-border: #8A6400; --status-warn-text: #F5C97A;
+            --btn-hover-bg: #4A453F; --btn-hover-text: #F0EDE8;
         }
     """,
     "system": """
         :root {
-            --bg: #FAFAF8; --surface: #F0EDE8; --border: #E8E4DE;
+            --bg: #EDEBE6; --surface: #E4E0D9; --border: #CEC8BF;
             --text: #1A1814; --text-muted: #555; --text-faint: #aaa;
-            --card-bg: #F0EDE8; --card-border: #C8C2BA;
-            --preview-bg: #FDFCFA; --preview-border: #E0DBD4;
+            --card-bg: #E4E0D9; --card-border: #BCB5AB;
+            --preview-bg: #F2EFE9; --preview-border: #D4CEC6;
             --status-ok-bg: #EDFBF3; --status-ok-border: #A8DFBB; --status-ok-text: #1E6B3E;
             --status-warn-bg: #FFF8EC; --status-warn-border: #F5C97A; --status-warn-text: #7A4E00;
+            --btn-hover-bg: #3A3530; --btn-hover-text: #F0EDE8;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -38,6 +41,7 @@ THEME_CSS = {
                 --preview-bg: #1E1C18; --preview-border: #3A342C;
                 --status-ok-bg: #0D2B1A; --status-ok-border: #2A6B40; --status-ok-text: #6FDFAA;
                 --status-warn-bg: #2B1E00; --status-warn-border: #8A6400; --status-warn-text: #F5C97A;
+                --btn-hover-bg: #4A453F; --btn-hover-text: #F0EDE8;
             }
         }
     """,
@@ -81,6 +85,34 @@ GLOBAL_CSS = """
   .preview-box { background: var(--preview-bg); border: 1px solid var(--preview-border); border-radius: 8px; padding: 20px; font-family: monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; max-height: 500px; overflow-y: auto; color: var(--text); }
 
   .stButton > button { border-radius: 6px !important; font-weight: 500 !important; }
+  [data-testid="baseButton-secondary"]:hover,
+  [data-testid="baseButton-secondaryFormSubmit"]:hover,
+  [data-testid="stSidebar"] .stButton > button:not([data-testid="baseButton-primary"]):hover,
+  [data-testid="stSidebar"] .stFormSubmitButton > button:hover {
+    background: var(--btn-hover-bg) !important;
+    border-color: var(--btn-hover-bg) !important;
+    color: var(--btn-hover-text) !important;
+  }
+  [data-testid="stSidebar"] [data-testid="baseButton-secondary"] {
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+  }
+  [data-testid="stSidebar"] [data-testid="stSpinner"] * {
+    color: var(--text) !important;
+    border-top-color: var(--text) !important;
+  }
+  .test-ok {
+    background: #14532d; color: #bbf7d0;
+    border: 1px solid #16a34a;
+    padding: 8px 12px; border-radius: 6px;
+    font-size: 12.5px; line-height: 1.4; word-break: break-word;
+  }
+  .test-error {
+    background: #7f1d1d; color: #fecaca;
+    border: 1px solid #dc2626;
+    padding: 8px 12px; border-radius: 6px;
+    font-size: 12.5px; line-height: 1.4; word-break: break-word;
+  }
   div[data-testid="stDownloadButton"] > button { width: 100% !important; }
 
 

@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -13,7 +15,7 @@ _USER_KEYS = [
     "generation_error", "sidebar_test_result",
     "is_generating", "pending_job", "pending_key",
     "login_loading", "login_email", "login_password",
-    "_toast",
+    "_toast", "_cookies_saved",
 ]
 
 # ── SVG icons ──────────────────────────────────────────────────────────────────
@@ -157,6 +159,48 @@ _FORM_JS = """
 """
 
 
+
+def render_new_password(T: dict, access_token: str, refresh_token: str) -> None:
+    components.html(_FORM_JS, height=0)
+    _flush_toast()
+    st.markdown(
+        '<p style="font-size:42px;font-weight:800;letter-spacing:-1.5px;'
+        'text-align:center;margin:60px 0 4px 0">RouterResume</p>',
+        unsafe_allow_html=True,
+    )
+    _, col, _ = st.columns([1, 2, 1])
+    with col:
+        st.markdown(f"### {T['auth_new_password_title']}")
+        with st.form("new_password_form"):
+            new_pwd     = st.text_input(T["auth_new_password"], type="password")
+            confirm_pwd = st.text_input(T["auth_confirm_password"], type="password")
+            submitted   = st.form_submit_button(
+                T["auth_save_password_btn"], use_container_width=True, type="primary"
+            )
+        if submitted:
+            if not new_pwd:
+                _queue_toast(T["auth_fill_all"], "warning")
+                st.rerun()
+            elif len(new_pwd) < 6:
+                _queue_toast(T["auth_pwd_short"], "warning")
+                st.rerun()
+            elif new_pwd != confirm_pwd:
+                _queue_toast(T["auth_passwords_mismatch"], "warning")
+                st.rerun()
+            else:
+                try:
+                    sb = get_supabase()
+                    sb.auth.set_session(access_token, refresh_token)
+                    sb.auth.update_user({"password": new_pwd})
+                    sb.auth.sign_out()
+                    _queue_toast(T["auth_password_updated"], "success")
+                    st.query_params.clear()
+                    st.rerun()
+                except Exception:
+                    _queue_toast(T["auth_password_update_error"], "error")
+                    st.rerun()
+
+
 def clear_user_session() -> None:
     for k in _USER_KEYS:
         st.session_state.pop(k, None)
@@ -165,12 +209,16 @@ def clear_user_session() -> None:
 def _load_user_data(user_id: str) -> None:
     clear_user_session()
     profile = get_profile(user_id)
-    st.session_state["profile_data"] = profile.get("data_md", "")
-    st.session_state["ref_resumes"]  = get_reference_resumes(user_id)
+    st.session_state["profile_data"]  = profile.get("data_md", "")
+    st.session_state["ref_resumes"]   = get_reference_resumes(user_id)
     if profile.get("openrouter_key"):
         st.session_state["api_key"] = profile["openrouter_key"]
     if profile.get("ai_model"):
         st.session_state["model"] = profile["ai_model"]
+    if profile.get("ui_lang"):
+        st.session_state["ui_lang"] = profile["ui_lang"]
+    if profile.get("ui_theme"):
+        st.session_state["ui_theme"] = profile["ui_theme"]
 
 
 def _queue_toast(msg: str, toast_type: str) -> None:
@@ -228,7 +276,11 @@ def render_auth(T: dict) -> None:
             st.session_state["refresh_token"] = res.session.refresh_token
             st.rerun()
         except Exception as e:
-            _queue_toast(_parse_login_error(e, T), "error")
+            msg = _parse_login_error(e, T)
+            detail = str(e)
+            if detail and detail.lower() not in msg.lower():
+                msg = f"{msg} ({detail[:120]})"
+            _queue_toast(msg, "error")
             st.rerun()
         return
 
@@ -237,23 +289,59 @@ def render_auth(T: dict) -> None:
         tab_login, tab_signup = st.tabs([T["auth_login"], T["auth_signup"]])
 
         with tab_login:
-            with st.form("login_form"):
-                email = st.text_input(T["auth_email"])
-                password = st.text_input(T["auth_password"], type="password")
-                submitted = st.form_submit_button(
-                    T["auth_login_btn"],
-                    use_container_width=True,
-                    type="primary",
-                )
+            show_reset = st.session_state.get("show_reset_form", False)
 
-            if submitted:
-                if not email or not password:
-                    _queue_toast(T["auth_fill_all"], "warning")
+            if show_reset:
+                st.markdown(f"**{T['auth_reset_title']}**")
+                with st.form("reset_form"):
+                    email_r   = st.text_input(T["auth_email"])
+                    submitted_r = st.form_submit_button(
+                        T["auth_reset_btn"], use_container_width=True, type="primary"
+                    )
+                if submitted_r:
+                    if not email_r:
+                        _queue_toast(T["auth_fill_email"], "warning")
+                        st.rerun()
+                    else:
+                        try:
+                            site_url = os.getenv("SITE_URL", "http://localhost:8501")
+                            get_supabase().auth.reset_password_for_email(
+                                email_r, {"redirect_to": site_url}
+                            )
+                            _queue_toast(T["auth_reset_sent"], "success")
+                            st.session_state["show_reset_form"] = False
+                        except Exception:
+                            _queue_toast(T["auth_reset_error"], "error")
+                        st.rerun()
+                if st.button(T["auth_back"], use_container_width=True):
+                    st.session_state["show_reset_form"] = False
                     st.rerun()
-                else:
-                    st.session_state["login_email"]    = email
-                    st.session_state["login_password"] = password
-                    st.session_state["login_loading"]  = True
+            else:
+                with st.form("login_form"):
+                    email = st.text_input(T["auth_email"])
+                    password = st.text_input(T["auth_password"], type="password")
+                    submitted = st.form_submit_button(
+                        T["auth_login_btn"],
+                        use_container_width=True,
+                        type="primary",
+                    )
+
+                if submitted:
+                    if not email or not password:
+                        _queue_toast(T["auth_fill_all"], "warning")
+                        st.rerun()
+                    else:
+                        st.session_state["login_email"]    = email
+                        st.session_state["login_password"] = password
+                        st.session_state["login_loading"]  = True
+                        st.rerun()
+
+                if st.button(
+                    T["auth_forgot_password"],
+                    use_container_width=True,
+                    type="secondary",
+                ):
+                    st.session_state["show_reset_form"] = True
                     st.rerun()
 
         with tab_signup:
@@ -281,3 +369,4 @@ def render_auth(T: dict) -> None:
                     except Exception:
                         _queue_toast(T["auth_signup_error"], "error")
                 st.rerun()
+

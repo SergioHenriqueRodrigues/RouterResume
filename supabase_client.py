@@ -21,6 +21,13 @@ def restore_session(access_token: str, refresh_token: str):
         res = get_supabase().auth.set_session(access_token, refresh_token)
         if res and res.user and res.session:
             return res.user, res.session.access_token, res.session.refresh_token
-        return None
     except Exception:
-        return None
+        pass
+    # Access token may be expired — try refreshing with refresh token
+    try:
+        res = get_supabase().auth.refresh_session(refresh_token)
+        if res and res.user and res.session:
+            return res.user, res.session.access_token, res.session.refresh_token
+    except Exception:
+        pass
+    return None

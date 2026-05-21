@@ -1,4 +1,5 @@
 import json
+import time
 import urllib.request
 import urllib.error
 
@@ -10,19 +11,60 @@ from ui.tabs.tab_how_to import _CONTENT as _HOW_TO_CONTENT
 from generate import LANGUAGES, read_data_md, read_old_resumes, validate_api_key
 
 
-@st.dialog("Como usar", width="large")
-def _show_how_to_modal_pt() -> None:
-    st.markdown(_HOW_TO_CONTENT.get("pt", _HOW_TO_CONTENT["en"]))
+def _render_profile_content(lang: str) -> None:
+    T        = UI_STRINGS[lang]
+    tab_prof, tab_how = st.tabs([T["profile_tab"], T["how_to_expander"]])
+
+    with tab_prof:
+        ui_lang_options = {"pt": "🇧🇷 Português", "en": "🇺🇸 English", "es": "🇪🇸 Español"}
+        selected_lang = st.selectbox(
+            T["language_label"],
+            options=list(ui_lang_options.keys()),
+            format_func=lambda k: ui_lang_options[k],
+            index=list(ui_lang_options.keys()).index(lang),
+            key="modal_lang_select",
+        )
+
+        theme_opts_keys   = ["light", "dark", "system"]
+        theme_opts_labels = {k: T[f"theme_{k}"] for k in theme_opts_keys}
+        current_theme     = st.session_state.get("ui_theme", "system")
+        selected_theme = st.selectbox(
+            T["theme_label"],
+            options=theme_opts_keys,
+            format_func=lambda k: theme_opts_labels[k],
+            index=theme_opts_keys.index(current_theme),
+            key="modal_theme_select",
+        )
+
+        if st.button(T["save_btn"], type="primary", use_container_width=True):
+            st.session_state["ui_lang"]  = selected_lang
+            st.session_state["ui_theme"] = selected_theme
+            user = st.session_state.get("user")
+            if user:
+                try:
+                    from db.profiles import save_ui_preferences
+                    save_ui_preferences(user.id, selected_lang, selected_theme)
+                except Exception:
+                    pass
+            st.rerun()
+
+    with tab_how:
+        st.markdown(_HOW_TO_CONTENT.get(lang, _HOW_TO_CONTENT["en"]))
 
 
-@st.dialog("How to use", width="large")
-def _show_how_to_modal_en() -> None:
-    st.markdown(_HOW_TO_CONTENT.get("en", _HOW_TO_CONTENT["en"]))
+@st.dialog("Configurações", width="large")
+def _show_profile_modal_pt() -> None:
+    _render_profile_content("pt")
 
 
-@st.dialog("Cómo usar", width="large")
-def _show_how_to_modal_es() -> None:
-    st.markdown(_HOW_TO_CONTENT.get("es", _HOW_TO_CONTENT["en"]))
+@st.dialog("Settings", width="large")
+def _show_profile_modal_en() -> None:
+    _render_profile_content("en")
+
+
+@st.dialog("Configuración", width="large")
+def _show_profile_modal_es() -> None:
+    _render_profile_content("es")
 
 
 def _inject_sidebar_toggle() -> None:
@@ -161,7 +203,10 @@ def _run_connection_test(api_key: str, model: str, T: dict) -> None:
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read())
             reply = data["choices"][0]["message"]["content"]
-            st.session_state["sidebar_test_result"] = ("ok", T["test_key_ok"].format(reply=reply))
+            if not reply:
+                st.session_state["sidebar_test_result"] = ("error", T["test_key_err_model"].format(model=model, detail="no content returned"))
+            else:
+                st.session_state["sidebar_test_result"] = ("ok", T["test_key_ok"].format(reply=reply))
     except urllib.error.HTTPError as e:
         body = e.read().decode()
         try:
@@ -193,74 +238,34 @@ def render_sidebar() -> tuple:
     is_generating = st.session_state.get("is_generating", False)
 
     with st.sidebar:
-        # ── Usuário logado ─────────────────────────────────────────────────────
         user = st.session_state.get("user")
+
+        # ── Título + botão de configurações ────────────────────────────────────
+        col_title, col_cfg = st.columns([5, 1])
+        with col_title:
+            st.markdown(
+                f'<p style="font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);'
+                f'line-height:1.1;margin:0 0 0 0">{T["title"]}</p>',
+                unsafe_allow_html=True,
+            )
+        with col_cfg:
+            if user:
+                if st.button("", icon=":material/settings:", help=T["profile_modal_title"], key="profile_btn"):
+                    if ui_lang == "en":
+                        _show_profile_modal_en()
+                    elif ui_lang == "es":
+                        _show_profile_modal_es()
+                    else:
+                        _show_profile_modal_pt()
+
+        # ── Nome / email ────────────────────────────────────────────────────────
         if user:
             email = getattr(user, "email", "") or ""
-            col_email, col_logout = st.columns([4, 1])
-            with col_email:
-                st.caption(f"{T['auth_logged_as']} **{email}**")
-            with col_logout:
-                if st.button("", icon=":material/logout:", help=T["auth_logout"], key="logout_btn"):
-                    from supabase_client import get_supabase
-                    from ui.auth import clear_user_session
-                    try:
-                        get_supabase().auth.sign_out()
-                    except Exception:
-                        pass
-                    st.session_state["_clear_cookies"] = True
-                    clear_user_session()
-                    st.rerun()
-
-        # ── Título + idioma da UI / tema ───────────────────────────────────────
-        st.markdown(
-            f'<p style="font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--text);'
-            f'line-height:1.1;margin:0 0 8px 0;padding:0 0 12px 0">{T["title"]}</p>',
-            unsafe_allow_html=True,
-        )
-
-        col_lang, col_theme, col_help = st.columns([3, 2, 1], vertical_alignment="center")
-        with col_lang:
-            ui_lang_options = {"pt": "🇧🇷 Português", "en": "🇺🇸 English", "es": "🇪🇸 Español"}
-            selected_lang = st.selectbox(
-                "lang",
-                options=list(ui_lang_options.keys()),
-                format_func=lambda k: ui_lang_options[k],
-                index=list(ui_lang_options.keys()).index(ui_lang),
-                label_visibility="collapsed",
-                key="lang_select",
-                disabled=is_generating,
+            st.markdown(
+                f'<p style="font-size:0.82rem;color:var(--text-muted);margin:-26px 0 6px 0">'
+                f'{T["auth_logged_as"]} <strong>{email}</strong></p>',
+                unsafe_allow_html=True,
             )
-            if selected_lang != ui_lang:
-                st.session_state["ui_lang"] = selected_lang
-                if "theme_select" in st.session_state:
-                    del st.session_state["theme_select"]
-                st.rerun()
-
-        with col_theme:
-            theme_opts_keys   = ["light", "dark", "system"]
-            theme_opts_labels = {"light": T["theme_light"], "dark": T["theme_dark"], "system": T["theme_system"]}
-            selected_theme = st.selectbox(
-                "theme",
-                options=theme_opts_keys,
-                format_func=lambda k: theme_opts_labels[k],
-                index=theme_opts_keys.index(ui_theme),
-                label_visibility="collapsed",
-                key="theme_select",
-                disabled=is_generating,
-            )
-            if selected_theme != ui_theme:
-                st.session_state["ui_theme"] = selected_theme
-                st.rerun()
-
-        with col_help:
-            if st.button("", icon=":material/help:", help=T["how_to_expander"], key="how_to_btn"):
-                if ui_lang == "en":
-                    _show_how_to_modal_en()
-                elif ui_lang == "es":
-                    _show_how_to_modal_es()
-                else:
-                    _show_how_to_modal_pt()
 
         # ── Seção: Geração ─────────────────────────────────────────────────────
         st.markdown("---")
@@ -343,10 +348,11 @@ def render_sidebar() -> tuple:
         test_result = st.session_state.get("sidebar_test_result")
         if test_result:
             status, msg = test_result
-            if status == "ok":
-                st.success(msg)
-            else:
-                st.error(msg)
+            css_class = "test-ok" if status == "ok" else "test-error"
+            st.markdown(
+                f'<div class="{css_class}">{msg}</div>',
+                unsafe_allow_html=True,
+            )
 
         # ── Status ─────────────────────────────────────────────────────────────
         st.markdown("---")
@@ -378,6 +384,41 @@ def render_sidebar() -> tuple:
             st.markdown(
                 f'<div class="status-warn">{T["status_warn_resumes"]}</div>',
                 unsafe_allow_html=True,
+            )
+
+        # ── Sair ───────────────────────────────────────────────────────────────
+        if user:
+            st.markdown("---")
+            if st.button(
+                T["auth_logout"],
+                icon=":material/logout:",
+                use_container_width=True,
+                key="logout_btn",
+            ):
+                from supabase_client import get_supabase
+                from ui.auth import clear_user_session
+                try:
+                    get_supabase().auth.sign_out()
+                except Exception:
+                    pass
+                st.session_state["_clear_cookies"] = True
+                clear_user_session()
+                st.rerun()
+            _logout_label = json.dumps(T["auth_logout"])
+            components.html(
+                f"<script>(function(){{"
+                f"function s(){{"
+                f"var pd=window.parent.document;"
+                f"pd.querySelectorAll('[data-testid=\"stSidebar\"] button').forEach(function(b){{"
+                f"if(b.textContent.trim()==={_logout_label}){{"
+                f"b.style.setProperty('background','#dc2626','important');"
+                f"b.style.setProperty('color','#ffffff','important');"
+                f"b.style.setProperty('border-color','#dc2626','important');"
+                f"}}}});}}"
+                f"s();new MutationObserver(function(){{setTimeout(s,60);}}).observe("
+                f"window.parent.document.documentElement,{{childList:true,subtree:true}});"
+                f"}})();</script>",
+                height=0,
             )
 
     return lang, fmt, model, api_key, T
