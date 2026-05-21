@@ -153,6 +153,26 @@ def _inject_sidebar_toggle() -> None:
 """, height=0)
 
 
+_ICON_PERSON = (
+    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>'
+    '<circle cx="12" cy="7" r="4"/>'
+    '</svg>'
+)
+_ICON_FOLDER = (
+    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>'
+    '</svg>'
+)
+_ICON_CHEVRON = (
+    '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
+    '<polyline points="9 18 15 12 9 6"/>'
+    '</svg>'
+)
+
 _ICON_SLIDERS = (
     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
     ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
@@ -173,6 +193,25 @@ _ICON_KEY = (
     '<path d="M15 8l2 2"/>'
     '</svg>'
 )
+
+
+def _inject_nav_tab_js() -> None:
+    components.html(
+        "<script>(function(){"
+        "var pd=window.parent.document;"
+        "function setup(){"
+        "pd.querySelectorAll('[data-nav-tab]').forEach(function(el){"
+        "if(el._rrNav)return;el._rrNav=true;"
+        "el.addEventListener('click',function(){"
+        "var idx=parseInt(el.getAttribute('data-nav-tab'));"
+        "var tabs=pd.querySelectorAll('[data-baseweb=\"tab\"]');"
+        "if(tabs[idx])tabs[idx].click();"
+        "});});}"
+        "new MutationObserver(function(){setup();}).observe(pd.documentElement,{childList:true,subtree:true});"
+        "setup();"
+        "})();</script>",
+        height=0,
+    )
 
 
 def _section_label(text: str, icon: str = "") -> None:
@@ -367,39 +406,50 @@ def render_sidebar() -> tuple:
             old_resumes_text = read_old_resumes()
             n_resumes        = old_resumes_text.count("[Resume:")
 
-        col_s1, col_n1 = st.columns([8, 1])
-        with col_s1:
-            if raw_data.strip():
-                st.markdown(
-                    f'<div class="status-ok">{T["status_ok_data"].format(chars=len(raw_data))}</div>',
-                    unsafe_allow_html=True,
-                )
-            else:
-                st.markdown(
-                    f'<div class="status-warn">{T["status_warn_data"]}</div>',
-                    unsafe_allow_html=True,
-                )
-        with col_n1:
-            if st.button("", key="nav_to_data_tab", icon=":material/chevron_right:", help=T["tab_data"]):
-                st.session_state["_nav_tab"] = 2
-                st.rerun()
+        _nav_icon = (
+            f'<span style="display:flex;align-items:center;gap:2px;opacity:0.5;flex-shrink:0">'
+            f'{_ICON_PERSON}{_ICON_CHEVRON}'
+            f'</span>'
+        )
+        if raw_data.strip():
+            st.markdown(
+                f'<div class="status-ok status-nav" data-nav-tab="2"'
+                f' style="display:flex;justify-content:space-between;align-items:center">'
+                f'<span>{T["status_ok_data"].format(chars=len(raw_data))}</span>'
+                f'{_nav_icon}</div>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                f'<div class="status-warn status-nav" data-nav-tab="2"'
+                f' style="display:flex;justify-content:space-between;align-items:center">'
+                f'<span>{T["status_warn_data"]}</span>'
+                f'{_nav_icon}</div>',
+                unsafe_allow_html=True,
+            )
 
-        col_s2, col_n2 = st.columns([8, 1])
-        with col_s2:
-            if n_resumes > 0:
-                st.markdown(
-                    f'<div class="status-ok">{T["status_ok_resumes"].format(n=n_resumes)}</div>',
-                    unsafe_allow_html=True,
-                )
-            else:
-                st.markdown(
-                    f'<div class="status-warn">{T["status_warn_resumes"]}</div>',
-                    unsafe_allow_html=True,
-                )
-        with col_n2:
-            if st.button("", key="nav_to_resumes_tab", icon=":material/chevron_right:", help=T["tab_resumes"]):
-                st.session_state["_nav_tab"] = 3
-                st.rerun()
+        _nav_icon_folder = (
+            f'<span style="display:flex;align-items:center;gap:2px;opacity:0.5;flex-shrink:0">'
+            f'{_ICON_FOLDER}{_ICON_CHEVRON}'
+            f'</span>'
+        )
+        if n_resumes > 0:
+            st.markdown(
+                f'<div class="status-ok status-nav" data-nav-tab="3"'
+                f' style="display:flex;justify-content:space-between;align-items:center">'
+                f'<span>{T["status_ok_resumes"].format(n=n_resumes)}</span>'
+                f'{_nav_icon_folder}</div>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                f'<div class="status-warn status-nav" data-nav-tab="3"'
+                f' style="display:flex;justify-content:space-between;align-items:center">'
+                f'<span>{T["status_warn_resumes"]}</span>'
+                f'{_nav_icon_folder}</div>',
+                unsafe_allow_html=True,
+            )
+        _inject_nav_tab_js()
 
         # ── Sair ───────────────────────────────────────────────────────────────
         if user:
