@@ -97,9 +97,8 @@ GLOBAL_CSS = """
   .stButton > button { border-radius: 6px !important; font-weight: 500 !important; }
   [data-testid="baseButton-secondary"]:hover,
   [data-testid="baseButton-secondaryFormSubmit"]:hover,
-  [data-testid="stSidebar"] .stButton > button:not([data-testid="baseButton-primary"]):hover,
-  [data-testid="stSidebar"] .stFormSubmitButton > button:hover,
-  [data-testid="stSidebar"] button[data-testid^="baseButton"]:not([data-testid="baseButton-primary"]):hover {
+  [data-testid="stSidebar"] button:hover,
+  [data-testid="stSidebar"] .stFormSubmitButton > button:hover {
     background: var(--btn-hover-bg) !important;
     border-color: var(--btn-hover-bg) !important;
     color: var(--btn-hover-text) !important;
