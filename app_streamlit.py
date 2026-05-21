@@ -138,6 +138,10 @@ if not st.session_state.get("user"):
     render_auth(T)
     st.stop()
 
+# ── reload ref_resumes before sidebar so the count is always current ──────────
+if st.session_state.get("user") and "ref_resumes" not in st.session_state:
+    st.session_state["ref_resumes"] = get_reference_resumes(st.session_state["user"].id)
+
 # ── sidebar ────────────────────────────────────────────────────────────────────
 _flush_toast()
 lang, fmt, model, api_key, T = render_sidebar()
