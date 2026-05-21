@@ -303,15 +303,16 @@ def render_auth(T: dict) -> None:
                         _queue_toast(T["auth_fill_email"], "warning")
                         st.rerun()
                     else:
-                        try:
-                            site_url = os.getenv("SITE_URL", "http://localhost:8501")
-                            get_supabase().auth.reset_password_for_email(
-                                email_r, {"redirect_to": site_url}
-                            )
-                            _queue_toast(T["auth_reset_sent"], "success")
-                            st.session_state["show_reset_form"] = False
-                        except Exception:
-                            _queue_toast(T["auth_reset_error"], "error")
+                        with st.spinner(T["sending"]):
+                            try:
+                                site_url = os.getenv("SITE_URL", "http://localhost:8501")
+                                get_supabase().auth.reset_password_for_email(
+                                    email_r, {"redirect_to": site_url}
+                                )
+                                _queue_toast(T["auth_reset_sent"], "success")
+                                st.session_state["show_reset_form"] = False
+                            except Exception:
+                                _queue_toast(T["auth_reset_error"], "error")
                         st.rerun()
                 if st.button(T["auth_back"], use_container_width=True):
                     st.session_state["show_reset_form"] = False
@@ -358,15 +359,16 @@ def render_auth(T: dict) -> None:
                 elif len(pwd_s) < 6:
                     _queue_toast(T["auth_pwd_short"], "warning")
                 else:
-                    try:
-                        res = get_supabase().auth.sign_up(
-                            {"email": email_s, "password": pwd_s}
-                        )
-                        if res.user:
-                            _queue_toast(T["auth_signup_success"], "success")
-                        else:
+                    with st.spinner(T["auth_signup_btn"]):
+                        try:
+                            res = get_supabase().auth.sign_up(
+                                {"email": email_s, "password": pwd_s}
+                            )
+                            if res.user:
+                                _queue_toast(T["auth_signup_success"], "success")
+                            else:
+                                _queue_toast(T["auth_signup_error"], "error")
+                        except Exception:
                             _queue_toast(T["auth_signup_error"], "error")
-                    except Exception:
-                        _queue_toast(T["auth_signup_error"], "error")
                 st.rerun()
 

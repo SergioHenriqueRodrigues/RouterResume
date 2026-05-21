@@ -70,6 +70,7 @@ def _render_cloud_resumes(T: dict) -> None:
                     st.rerun()
 
 
+@st.fragment
 def render_tab_resumes(T: dict) -> None:
     user = st.session_state.get("user")
     OLD_RESUMES_DIR.mkdir(exist_ok=True)
@@ -94,24 +95,24 @@ def render_tab_resumes(T: dict) -> None:
         disabled=not has_files,
         icon=":material/upload:",
     ):
-        saved_count = 0
-        for f in uploaded:
-            size_mb = f.size / (1024 * 1024)
-            if size_mb > MAX_UPLOAD_MB:
-                st.warning(T["upload_too_large"].format(
-                    name=f.name, size=size_mb, limit=MAX_UPLOAD_MB
-                ))
-                continue
-            safe_name = _sanitize_filename(f.name)
-            content = f.read()
-            if user:
-                upload_reference_resume(user.id, safe_name, content)
-                # reload cache from DB on next render
-                st.session_state.pop("ref_resumes", None)
-            else:
-                dest = OLD_RESUMES_DIR / safe_name
-                dest.write_bytes(content)
-            saved_count += 1
+        with st.spinner(T["uploading"]):
+            saved_count = 0
+            for f in uploaded:
+                size_mb = f.size / (1024 * 1024)
+                if size_mb > MAX_UPLOAD_MB:
+                    st.warning(T["upload_too_large"].format(
+                        name=f.name, size=size_mb, limit=MAX_UPLOAD_MB
+                    ))
+                    continue
+                safe_name = _sanitize_filename(f.name)
+                content = f.read()
+                if user:
+                    upload_reference_resume(user.id, safe_name, content)
+                    st.session_state.pop("ref_resumes", None)
+                else:
+                    dest = OLD_RESUMES_DIR / safe_name
+                    dest.write_bytes(content)
+                saved_count += 1
 
         st.session_state["uploader_key"] = st.session_state.get("uploader_key", 0) + 1
         if saved_count:

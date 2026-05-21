@@ -40,10 +40,11 @@ def render_tab_data(T: dict) -> None:
         st.caption(caption)
     with col_btn:
         if st.button(T["save_btn"], type="primary", icon=":material/save:", use_container_width=True):
-            if user:
-                save_profile_data(user.id, new_content)
-                st.session_state["profile_data"] = new_content
-            else:
-                DATA_MD.write_text(new_content, encoding="utf-8")
+            with st.spinner(T["saving"]):
+                if user:
+                    save_profile_data(user.id, new_content)
+                    st.session_state["profile_data"] = new_content
+                else:
+                    DATA_MD.write_text(new_content, encoding="utf-8")
             st.success(T["save_success"])
             st.rerun()

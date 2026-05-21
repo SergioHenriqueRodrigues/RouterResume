@@ -127,6 +127,10 @@ UI_STRINGS = {
         "auth_passwords_mismatch": "As senhas não coincidem.",
         "auth_password_updated": "Senha atualizada! Faça login.",
         "auth_password_update_error": "Erro ao atualizar senha. O link pode ter expirado.",
+        "saving": "Salvando...",
+        "uploading": "Enviando...",
+        "sending": "Enviando...",
+        "signing_out": "Saindo...",
     },
     "en": {
         "title": "RouterResume",
@@ -256,6 +260,10 @@ UI_STRINGS = {
         "auth_passwords_mismatch": "Passwords do not match.",
         "auth_password_updated": "Password updated! Please sign in.",
         "auth_password_update_error": "Error updating password. The link may have expired.",
+        "saving": "Saving...",
+        "uploading": "Uploading...",
+        "sending": "Sending...",
+        "signing_out": "Signing out...",
     },
     "es": {
         "title": "RouterResume",
@@ -382,5 +390,9 @@ UI_STRINGS = {
         "auth_passwords_mismatch": "Las contraseñas no coinciden.",
         "auth_password_updated": "¡Contraseña actualizada! Inicia sesión.",
         "auth_password_update_error": "Error al actualizar la contraseña. El enlace puede haber expirado.",
+        "saving": "Guardando...",
+        "uploading": "Subiendo...",
+        "sending": "Enviando...",
+        "signing_out": "Cerrando sesión...",
     },
 }
