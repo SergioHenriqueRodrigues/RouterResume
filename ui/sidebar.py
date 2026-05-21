@@ -41,11 +41,12 @@ def _render_profile_content(lang: str) -> None:
             st.session_state["ui_theme"] = selected_theme
             user = st.session_state.get("user")
             if user:
-                try:
-                    from db.profiles import save_ui_preferences
-                    save_ui_preferences(user.id, selected_lang, selected_theme)
-                except Exception:
-                    pass
+                with st.spinner(T["saving"]):
+                    try:
+                        from db.profiles import save_ui_preferences
+                        save_ui_preferences(user.id, selected_lang, selected_theme)
+                    except Exception:
+                        pass
             st.rerun()
 
     with tab_how:
@@ -324,11 +325,12 @@ def render_sidebar() -> tuple:
                         st.session_state.pop("sidebar_test_result", None)
                         user = st.session_state.get("user")
                         if user:
-                            from db.profiles import save_api_settings
-                            try:
-                                save_api_settings(user.id, api_key_input, model_input)
-                            except Exception:
-                                pass
+                            with st.spinner(T["saving"]):
+                                from db.profiles import save_api_settings
+                                try:
+                                    save_api_settings(user.id, api_key_input, model_input)
+                                except Exception:
+                                    pass
                     else:
                         st.error(T["api_key_invalid"])
 
@@ -395,12 +397,13 @@ def render_sidebar() -> tuple:
                 use_container_width=True,
                 key="logout_btn",
             ):
-                from supabase_client import get_supabase
-                from ui.auth import clear_user_session
-                try:
-                    get_supabase().auth.sign_out()
-                except Exception:
-                    pass
+                with st.spinner(T["signing_out"]):
+                    from supabase_client import get_supabase
+                    from ui.auth import clear_user_session
+                    try:
+                        get_supabase().auth.sign_out()
+                    except Exception:
+                        pass
                 st.session_state["_clear_cookies"] = True
                 clear_user_session()
                 st.rerun()
