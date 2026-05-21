@@ -4,7 +4,7 @@ from pathlib import Path
 
 from generate import OLD_RESUMES_DIR
 from ui.components import render_file_card
-from ui.auth import _queue_toast
+from ui.auth import _queue_toast, _flush_toast
 from db.reference_resumes import (
     upload_reference_resume,
     get_reference_resume_bytes,
@@ -77,6 +77,8 @@ def _render_cloud_resumes(T: dict) -> None:
 
 @st.fragment
 def render_tab_resumes(T: dict) -> None:
+    _flush_toast()
+    uploading = st.session_state.pop("_uploading", False)
     user = st.session_state.get("user")
     OLD_RESUMES_DIR.mkdir(exist_ok=True)
 
@@ -94,45 +96,19 @@ def render_tab_resumes(T: dict) -> None:
         st.info(f"{len(uploaded)} {T['upload_select']}")
 
     if st.button(
-        T["upload_btn"],
+        T["uploading"] if uploading else T["upload_btn"],
         type="primary",
         use_container_width=True,
-        disabled=not has_files,
-        icon=":material/upload:",
+        disabled=uploading or not has_files,
+        icon=":material/hourglass_empty:" if uploading else ":material/upload:",
     ):
-        with st.spinner(T["uploading"]):
-            saved_count = 0
-            for f in uploaded:
-                size_mb = f.size / (1024 * 1024)
-                if size_mb > MAX_UPLOAD_MB:
-                    st.warning(T["upload_too_large"].format(
-                        name=f.name, size=size_mb, limit=MAX_UPLOAD_MB
-                    ))
-                    continue
-                safe_name = _sanitize_filename(f.name)
-                content = f.read()
-                try:
-                    if user:
-                        upload_reference_resume(user.id, safe_name, content)
-                        st.session_state.pop("ref_resumes", None)
-                    else:
-                        dest = OLD_RESUMES_DIR / safe_name
-                        dest.write_bytes(content)
-                    saved_count += 1
-                except Exception:
-                    _queue_toast(T["error_upload"], "error")
-
-        st.session_state["uploader_key"] = st.session_state.get("uploader_key", 0) + 1
-        if saved_count:
-            st.success(T["upload_success"].format(n=saved_count))
-        st.session_state["_nav_tab"] = 3
-        st.rerun()
+        st.session_state["_uploading"] = True
+        st.rerun(scope="fragment")
 
     st.markdown("---")
     st.markdown(T["saved_files"])
 
     if user:
-        # Reload ref_resumes if cleared
         if "ref_resumes" not in st.session_state:
             from db.reference_resumes import get_reference_resumes
             st.session_state["ref_resumes"] = get_reference_resumes(user.id)
@@ -163,3 +139,31 @@ def render_tab_resumes(T: dict) -> None:
                         _queue_toast(T["error_delete"], "error")
                     st.session_state["_nav_tab"] = 3
                     st.rerun()
+
+    if uploading:
+        saved_count = 0
+        for f in uploaded:
+            size_mb = f.size / (1024 * 1024)
+            if size_mb > MAX_UPLOAD_MB:
+                _queue_toast(T["upload_too_large"].format(
+                    name=f.name, size=size_mb, limit=MAX_UPLOAD_MB
+                ), "warning")
+                continue
+            safe_name = _sanitize_filename(f.name)
+            content = f.read()
+            try:
+                if user:
+                    upload_reference_resume(user.id, safe_name, content)
+                    st.session_state.pop("ref_resumes", None)
+                else:
+                    dest = OLD_RESUMES_DIR / safe_name
+                    dest.write_bytes(content)
+                saved_count += 1
+            except Exception:
+                _queue_toast(T["error_upload"], "error")
+
+        st.session_state["uploader_key"] = st.session_state.get("uploader_key", 0) + 1
+        if saved_count:
+            _queue_toast(T["upload_success"].format(n=saved_count), "success")
+        st.session_state["_nav_tab"] = 3
+        st.rerun()
