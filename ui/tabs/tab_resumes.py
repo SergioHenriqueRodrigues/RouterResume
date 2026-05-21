@@ -67,7 +67,7 @@ def _render_cloud_resumes(T: dict) -> None:
                     st.session_state["ref_resumes"] = [
                         x for x in st.session_state.get("ref_resumes", []) if x["id"] != rid
                     ]
-                    st.rerun()
+                    st.rerun(scope="fragment")
 
 
 @st.fragment
@@ -117,7 +117,7 @@ def render_tab_resumes(T: dict) -> None:
         st.session_state["uploader_key"] = st.session_state.get("uploader_key", 0) + 1
         if saved_count:
             st.success(T["upload_success"].format(n=saved_count))
-        st.rerun()
+        st.rerun(scope="fragment")
 
     st.markdown("---")
     st.markdown(T["saved_files"])
@@ -149,4 +149,4 @@ def render_tab_resumes(T: dict) -> None:
                     delete_help=T["history_delete_help"],
                 ):
                     f.unlink()
-                    st.rerun()
+                    st.rerun(scope="fragment")
