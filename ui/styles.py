@@ -56,6 +56,7 @@ GLOBAL_CSS = """
   [data-testid="stToolbar"],
   [data-testid="stDecoration"],
   [data-testid="stStatusWidget"],
+  [data-testid="stAppDeployButton"],
   [data-testid="stSidebarCollapseButton"],
   [data-testid="stSidebarCollapsedControl"],
   [data-testid="collapsedControl"] { display: none !important; }
