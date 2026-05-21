@@ -4,10 +4,12 @@ import streamlit as st
 
 from generate import DATA_MD
 from db.profiles import save_profile_data
-from ui.auth import _queue_toast
+from ui.auth import _queue_toast, _flush_toast
 
 
+@st.fragment
 def render_tab_data(T: dict) -> None:
+    _flush_toast()
     user = st.session_state.get("user")
 
     if user:
@@ -53,6 +55,6 @@ def render_tab_data(T: dict) -> None:
                 except Exception:
                     _queue_toast(T["error_save"], "error")
             if saved:
-                st.success(T["save_success"])
+                _queue_toast(T["save_success"], "success")
             st.session_state["_nav_tab"] = 2
             st.rerun()
