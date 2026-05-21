@@ -4,6 +4,7 @@ import streamlit as st
 
 from generate import DATA_MD
 from db.profiles import save_profile_data
+from ui.auth import _queue_toast
 
 
 def render_tab_data(T: dict) -> None:
@@ -40,11 +41,18 @@ def render_tab_data(T: dict) -> None:
         st.caption(caption)
     with col_btn:
         if st.button(T["save_btn"], type="primary", icon=":material/save:", use_container_width=True):
+            saved = False
             with st.spinner(T["saving"]):
-                if user:
-                    save_profile_data(user.id, new_content)
-                    st.session_state["profile_data"] = new_content
-                else:
-                    DATA_MD.write_text(new_content, encoding="utf-8")
-            st.success(T["save_success"])
+                try:
+                    if user:
+                        save_profile_data(user.id, new_content)
+                        st.session_state["profile_data"] = new_content
+                    else:
+                        DATA_MD.write_text(new_content, encoding="utf-8")
+                    saved = True
+                except Exception:
+                    _queue_toast(T["error_save"], "error")
+            if saved:
+                st.success(T["save_success"])
+            st.session_state["_nav_tab"] = 2
             st.rerun()

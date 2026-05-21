@@ -131,6 +131,9 @@ UI_STRINGS = {
         "uploading": "Enviando...",
         "sending": "Enviando...",
         "signing_out": "Saindo...",
+        "error_save": "Erro ao salvar. Tente novamente.",
+        "error_upload": "Erro ao enviar o arquivo. Tente novamente.",
+        "error_delete": "Erro ao apagar. Tente novamente.",
     },
     "en": {
         "title": "RouterResume",
@@ -264,6 +267,9 @@ UI_STRINGS = {
         "uploading": "Uploading...",
         "sending": "Sending...",
         "signing_out": "Signing out...",
+        "error_save": "Error saving. Please try again.",
+        "error_upload": "Error uploading file. Please try again.",
+        "error_delete": "Error deleting. Please try again.",
     },
     "es": {
         "title": "RouterResume",
@@ -394,5 +400,8 @@ UI_STRINGS = {
         "uploading": "Subiendo...",
         "sending": "Enviando...",
         "signing_out": "Cerrando sesión...",
+        "error_save": "Error al guardar. Inténtalo de nuevo.",
+        "error_upload": "Error al subir el archivo. Inténtalo de nuevo.",
+        "error_delete": "Error al eliminar. Inténtalo de nuevo.",
     },
 }

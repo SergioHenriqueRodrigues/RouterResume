@@ -17,7 +17,7 @@ from ui.tabs.tab_history import render_tab_history
 from ui.tabs.tab_data import render_tab_data
 from ui.tabs.tab_resumes import render_tab_resumes
 from ui.i18n import UI_STRINGS
-from ui.auth import render_auth, render_new_password
+from ui.auth import render_auth, render_new_password, _flush_toast
 from supabase_client import restore_session
 from streamlit_cookies_controller import CookieController
 from db.profiles import get_profile
@@ -139,7 +139,23 @@ if not st.session_state.get("user"):
     st.stop()
 
 # ── sidebar ────────────────────────────────────────────────────────────────────
+_flush_toast()
 lang, fmt, model, api_key, T = render_sidebar()
+
+# ── tab navigation (restores active tab after full reruns from within tabs) ────
+_nav_tab = st.session_state.pop("_nav_tab", None)
+if _nav_tab is not None:
+    components.html(
+        f"<script>(function(){{"
+        f"var idx={_nav_tab},tries=0;"
+        f"function click(){{"
+        f"var t=window.parent.document.querySelectorAll('[data-baseweb=\"tab\"]');"
+        f"if(t[idx]){{t[idx].click();return;}}"
+        f"if(++tries<12)setTimeout(click,80);}}"
+        f"setTimeout(click,80);"
+        f"}})();</script>",
+        height=0,
+    )
 
 # ── main tabs ──────────────────────────────────────────────────────────────────
 tab_gen, tab_history, tab_data, tab_resumes = st.tabs([

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from generate import OLD_RESUMES_DIR
 from ui.components import render_file_card
+from ui.auth import _queue_toast
 from db.reference_resumes import (
     upload_reference_resume,
     get_reference_resume_bytes,
@@ -63,11 +64,15 @@ def _render_cloud_resumes(T: dict) -> None:
                     )
             with col_del:
                 if st.button("", key=f"del_ref_{rid}", icon=":material/delete:", help=T["history_delete_help"]):
-                    delete_reference_resume(rid)
-                    st.session_state["ref_resumes"] = [
-                        x for x in st.session_state.get("ref_resumes", []) if x["id"] != rid
-                    ]
-                    st.rerun(scope="fragment")
+                    try:
+                        delete_reference_resume(rid)
+                        st.session_state["ref_resumes"] = [
+                            x for x in st.session_state.get("ref_resumes", []) if x["id"] != rid
+                        ]
+                    except Exception:
+                        _queue_toast(T["error_delete"], "error")
+                    st.session_state["_nav_tab"] = 3
+                    st.rerun()
 
 
 @st.fragment
@@ -106,18 +111,22 @@ def render_tab_resumes(T: dict) -> None:
                     continue
                 safe_name = _sanitize_filename(f.name)
                 content = f.read()
-                if user:
-                    upload_reference_resume(user.id, safe_name, content)
-                    st.session_state.pop("ref_resumes", None)
-                else:
-                    dest = OLD_RESUMES_DIR / safe_name
-                    dest.write_bytes(content)
-                saved_count += 1
+                try:
+                    if user:
+                        upload_reference_resume(user.id, safe_name, content)
+                        st.session_state.pop("ref_resumes", None)
+                    else:
+                        dest = OLD_RESUMES_DIR / safe_name
+                        dest.write_bytes(content)
+                    saved_count += 1
+                except Exception:
+                    _queue_toast(T["error_upload"], "error")
 
         st.session_state["uploader_key"] = st.session_state.get("uploader_key", 0) + 1
         if saved_count:
             st.success(T["upload_success"].format(n=saved_count))
-        st.rerun(scope="fragment")
+        st.session_state["_nav_tab"] = 3
+        st.rerun()
 
     st.markdown("---")
     st.markdown(T["saved_files"])
@@ -148,5 +157,9 @@ def render_tab_resumes(T: dict) -> None:
                     delete_key=f"del_{f.name}",
                     delete_help=T["history_delete_help"],
                 ):
-                    f.unlink()
-                    st.rerun(scope="fragment")
+                    try:
+                        f.unlink()
+                    except Exception:
+                        _queue_toast(T["error_delete"], "error")
+                    st.session_state["_nav_tab"] = 3
+                    st.rerun()
