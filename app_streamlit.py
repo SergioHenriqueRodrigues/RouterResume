@@ -58,7 +58,7 @@ st.session_state.setdefault("uploader_key", 0)
 # ── page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="RouterResume",
-    page_icon="R",
+    page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded",
 )

@@ -77,6 +77,8 @@ GLOBAL_CSS = """
 
   .status-ok   { background: var(--status-ok-bg); border: 1px solid var(--status-ok-border); color: var(--status-ok-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
   .status-warn { background: var(--status-warn-bg); border: 1px solid var(--status-warn-border); color: var(--status-warn-text); padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
+  .status-nav  { cursor: pointer; user-select: none; transition: filter 0.13s, transform 0.1s; }
+  .status-nav:hover { filter: brightness(0.88); transform: translateX(2px); }
 
   .file-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
   .file-name { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text); }
