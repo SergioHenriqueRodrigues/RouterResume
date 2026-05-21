@@ -9,6 +9,7 @@ import streamlit.components.v1 as components
 from ui.i18n import UI_STRINGS
 from ui.tabs.tab_how_to import _CONTENT as _HOW_TO_CONTENT
 from generate import LANGUAGES, read_data_md, read_old_resumes, validate_api_key
+from ui.auth import _queue_toast, _flush_toast
 
 
 def _render_profile_content(lang: str) -> None:
@@ -46,7 +47,7 @@ def _render_profile_content(lang: str) -> None:
                         from db.profiles import save_ui_preferences
                         save_ui_preferences(user.id, selected_lang, selected_theme)
                     except Exception:
-                        pass
+                        _queue_toast(T["error_save"], "error")
             st.rerun()
 
     with tab_how:
@@ -330,7 +331,7 @@ def render_sidebar() -> tuple:
                                 try:
                                     save_api_settings(user.id, api_key_input, model_input)
                                 except Exception:
-                                    pass
+                                    _queue_toast(T["error_save"], "error")
                     else:
                         st.error(T["api_key_invalid"])
 
@@ -366,27 +367,39 @@ def render_sidebar() -> tuple:
             old_resumes_text = read_old_resumes()
             n_resumes        = old_resumes_text.count("[Resume:")
 
-        if raw_data.strip():
-            st.markdown(
-                f'<div class="status-ok">{T["status_ok_data"].format(chars=len(raw_data))}</div>',
-                unsafe_allow_html=True,
-            )
-        else:
-            st.markdown(
-                f'<div class="status-warn">{T["status_warn_data"]}</div>',
-                unsafe_allow_html=True,
-            )
+        col_s1, col_n1 = st.columns([8, 1])
+        with col_s1:
+            if raw_data.strip():
+                st.markdown(
+                    f'<div class="status-ok">{T["status_ok_data"].format(chars=len(raw_data))}</div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f'<div class="status-warn">{T["status_warn_data"]}</div>',
+                    unsafe_allow_html=True,
+                )
+        with col_n1:
+            if st.button("", key="nav_to_data_tab", icon=":material/chevron_right:", help=T["tab_data"]):
+                st.session_state["_nav_tab"] = 2
+                st.rerun()
 
-        if n_resumes > 0:
-            st.markdown(
-                f'<div class="status-ok">{T["status_ok_resumes"].format(n=n_resumes)}</div>',
-                unsafe_allow_html=True,
-            )
-        else:
-            st.markdown(
-                f'<div class="status-warn">{T["status_warn_resumes"]}</div>',
-                unsafe_allow_html=True,
-            )
+        col_s2, col_n2 = st.columns([8, 1])
+        with col_s2:
+            if n_resumes > 0:
+                st.markdown(
+                    f'<div class="status-ok">{T["status_ok_resumes"].format(n=n_resumes)}</div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f'<div class="status-warn">{T["status_warn_resumes"]}</div>',
+                    unsafe_allow_html=True,
+                )
+        with col_n2:
+            if st.button("", key="nav_to_resumes_tab", icon=":material/chevron_right:", help=T["tab_resumes"]):
+                st.session_state["_nav_tab"] = 3
+                st.rerun()
 
         # ── Sair ───────────────────────────────────────────────────────────────
         if user:
