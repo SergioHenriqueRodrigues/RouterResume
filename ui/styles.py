@@ -63,7 +63,7 @@ GLOBAL_CSS = """
   h1 { font-weight: 600 !important; letter-spacing: -0.5px !important; }
   h3 { font-weight: 500 !important; color: var(--text-muted) !important; margin-bottom: 0 !important; }
 
-  [data-testid="stSidebar"] { background: var(--bg) !important; border-right: 1px solid var(--border) !important; }
+  [data-testid="stSidebar"] { background: var(--bg) !important; border-right: 1px solid var(--border) !important; min-width: 385px !important; }
   [data-testid="stSidebar"] h1 { font-size: 32px !important; font-weight: 800 !important; letter-spacing: -1px !important; color: var(--text) !important; margin-bottom: 8px !important; }
   [data-testid="stSidebar"] hr { border-color: var(--border) !important; margin: 6px 0 !important; }
 
