@@ -89,7 +89,7 @@ GLOBAL_CSS = """
   .status-nav:hover { filter: brightness(0.88); transform: translateX(2px); }
 
   .file-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-  .file-name { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text); }
+  .file-name { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text-muted); }
   .file-size { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
   .preview-box { background: var(--preview-bg); border: 1px solid var(--preview-border); border-radius: 8px; padding: 20px; font-family: monospace; font-size: 12.5px; line-height: 1.75; white-space: pre-wrap; max-height: 500px; overflow-y: auto; color: var(--text); }
