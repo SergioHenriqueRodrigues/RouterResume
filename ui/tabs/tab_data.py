@@ -10,6 +10,7 @@ from ui.auth import _queue_toast, _flush_toast
 @st.fragment
 def render_tab_data(T: dict) -> None:
     _flush_toast()
+    saving = st.session_state.pop("_saving_data", False)
     user = st.session_state.get("user")
 
     if user:
@@ -42,19 +43,25 @@ def render_tab_data(T: dict) -> None:
     with col_meta:
         st.caption(caption)
     with col_btn:
-        if st.button(T["save_btn"], type="primary", icon=":material/save:", use_container_width=True):
-            saved = False
-            with st.spinner(T["saving"]):
-                try:
-                    if user:
-                        save_profile_data(user.id, new_content)
-                        st.session_state["profile_data"] = new_content
-                    else:
-                        DATA_MD.write_text(new_content, encoding="utf-8")
-                    saved = True
-                except Exception:
-                    _queue_toast(T["error_save"], "error")
-            if saved:
-                _queue_toast(T["save_success"], "success")
-            st.session_state["_nav_tab"] = 2
-            st.rerun()
+        if st.button(
+            T["saving"] if saving else T["save_btn"],
+            type="primary",
+            icon=":material/hourglass_empty:" if saving else ":material/save:",
+            use_container_width=True,
+            disabled=saving,
+        ):
+            st.session_state["_saving_data"] = True
+            st.rerun(scope="fragment")
+
+    if saving:
+        try:
+            if user:
+                save_profile_data(user.id, new_content)
+                st.session_state["profile_data"] = new_content
+            else:
+                DATA_MD.write_text(new_content, encoding="utf-8")
+            _queue_toast(T["save_success"], "success")
+        except Exception:
+            _queue_toast(T["error_save"], "error")
+        st.session_state["_nav_tab"] = 2
+        st.rerun()
