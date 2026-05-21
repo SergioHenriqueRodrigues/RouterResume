@@ -123,10 +123,15 @@ if st.session_state.get("user") and "profile_data" not in st.session_state:
         st.session_state["api_key"] = profile["openrouter_key"]
     if profile.get("ai_model"):
         st.session_state["model"] = profile["ai_model"]
-    if profile.get("ui_lang"):
-        st.session_state["ui_lang"] = profile["ui_lang"]
-    if profile.get("ui_theme"):
+    _appearance_changed = False
+    if profile.get("ui_lang") and profile["ui_lang"] != st.session_state.get("ui_lang"):
+        st.session_state["ui_lang"]  = profile["ui_lang"]
+        _appearance_changed = True
+    if profile.get("ui_theme") and profile["ui_theme"] != st.session_state.get("ui_theme"):
         st.session_state["ui_theme"] = profile["ui_theme"]
+        _appearance_changed = True
+    if _appearance_changed:
+        st.rerun()
 
 # ── auth gate ──────────────────────────────────────────────────────────────────
 if not st.session_state.get("user"):
