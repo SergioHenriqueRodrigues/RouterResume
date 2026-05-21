@@ -155,8 +155,8 @@ if _nav_tab is not None:
         f"function click(){{"
         f"var t=window.parent.document.querySelectorAll('[data-baseweb=\"tab\"]');"
         f"if(t[idx]){{t[idx].click();return;}}"
-        f"if(++tries<12)setTimeout(click,80);}}"
-        f"setTimeout(click,80);"
+        f"if(++tries<40)requestAnimationFrame(click);}}"
+        f"requestAnimationFrame(click);"
         f"}})();</script>",
         height=0,
     )
