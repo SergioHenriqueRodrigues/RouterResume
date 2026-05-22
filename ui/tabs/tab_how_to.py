@@ -2,14 +2,7 @@ import streamlit as st
 
 _CONTENT = {
     "pt": """
-### Passo 1 — Crie sua conta ou entre
-
-Crie uma conta gratuita ou faça login pelo painel na barra lateral.
-Com conta, seus dados de perfil, currículos de referência e histórico de gerações ficam salvos na nuvem.
-
----
-
-### Passo 2 — Configure sua API Key
+### Passo 1 — Configure sua API Key
 
 Na **barra lateral**, cole sua chave do OpenRouter (`sk-or-...`) e pressione **Enter**.
 
@@ -17,7 +10,7 @@ Na **barra lateral**, cole sua chave do OpenRouter (`sk-or-...`) e pressione **E
 
 ---
 
-### Passo 3 — Adicione seus dados de perfil
+### Passo 2 — Adicione seus dados de perfil
 
 Vá para a aba **Dados do Perfil** e cole tudo sobre você:
 
@@ -31,7 +24,7 @@ Clique em **Salvar dados** ao terminar.
 
 ---
 
-### Passo 4 — Adicione currículos de referência *(opcional)*
+### Passo 3 — Adicione currículos de referência *(opcional)*
 
 Vá para a aba **Currículos de Referência** e envie arquivos `.pdf`, `.docx`, `.txt` ou `.md`.
 
@@ -39,7 +32,7 @@ Eles ajudam a IA a usar seu estilo de escrita e destacar experiências reais com
 
 ---
 
-### Passo 5 — Gere o currículo
+### Passo 4 — Gere o currículo
 
 Vá para a aba **Gerar**, cole a descrição completa da vaga e clique em **Gerar currículo**.
 
@@ -52,7 +45,7 @@ Após gerar, baixe o arquivo e revise antes de enviar.
 
 ---
 
-### Passo 6 — Acesse seu histórico
+### Passo 5 — Acesse seu histórico
 
 Na aba **Histórico** você encontra todos os currículos gerados anteriormente para baixar novamente.
 
@@ -67,14 +60,7 @@ Na aba **Histórico** você encontra todos os currículos gerados anteriormente 
 - Erro **429** → rate limit atingido, aguarde alguns segundos ou troque de modelo
 """,
     "en": """
-### Step 1 — Create an account or sign in
-
-Create a free account or sign in from the panel in the sidebar.
-With an account, your profile data, reference resumes and generation history are saved in the cloud.
-
----
-
-### Step 2 — Set up your API Key
+### Step 1 — Set up your API Key
 
 In the **sidebar**, paste your OpenRouter key (`sk-or-...`) and press **Enter**.
 
@@ -82,7 +68,7 @@ In the **sidebar**, paste your OpenRouter key (`sk-or-...`) and press **Enter**.
 
 ---
 
-### Step 3 — Add your profile data
+### Step 2 — Add your profile data
 
 Go to the **Profile Data** tab and dump everything about yourself:
 
@@ -96,7 +82,7 @@ Click **Save data** when done.
 
 ---
 
-### Step 4 — Add reference resumes *(optional)*
+### Step 3 — Add reference resumes *(optional)*
 
 Go to the **Reference Resumes** tab and upload `.pdf`, `.docx`, `.txt` or `.md` files.
 
@@ -104,7 +90,7 @@ They help the AI match your writing style and highlight real experience more acc
 
 ---
 
-### Step 5 — Generate the resume
+### Step 4 — Generate the resume
 
 Go to the **Generate** tab, paste the full job description and click **Generate resume**.
 
@@ -117,7 +103,7 @@ After generating, download the file and review it before sending.
 
 ---
 
-### Step 6 — Access your history
+### Step 5 — Access your history
 
 In the **History** tab you can find all previously generated resumes to download again.
 
@@ -132,14 +118,7 @@ In the **History** tab you can find all previously generated resumes to download
 - Error **429** → rate limit reached, wait a moment or switch models
 """,
     "es": """
-### Paso 1 — Crea una cuenta o inicia sesión
-
-Crea una cuenta gratuita o inicia sesión desde el panel en la barra lateral.
-Con cuenta, tus datos de perfil, CVs de referencia e historial de generaciones se guardan en la nube.
-
----
-
-### Paso 2 — Configura tu API Key
+### Paso 1 — Configura tu API Key
 
 En la **barra lateral**, pega tu clave de OpenRouter (`sk-or-...`) y presiona **Enter**.
 
@@ -147,7 +126,7 @@ En la **barra lateral**, pega tu clave de OpenRouter (`sk-or-...`) y presiona **
 
 ---
 
-### Paso 3 — Agrega tus datos de perfil
+### Paso 2 — Agrega tus datos de perfil
 
 Ve a la pestaña **Datos del Perfil** y vuelca todo sobre ti:
 
@@ -161,7 +140,7 @@ Haz clic en **Guardar datos** al terminar.
 
 ---
 
-### Paso 4 — Agrega CVs de referencia *(opcional)*
+### Paso 3 — Agrega CVs de referencia *(opcional)*
 
 Ve a la pestaña **CVs de Referencia** y sube archivos `.pdf`, `.docx`, `.txt` o `.md`.
 
@@ -169,7 +148,7 @@ Ayudan a la IA a usar tu estilo de escritura y destacar experiencias reales con 
 
 ---
 
-### Paso 5 — Genera el currículum
+### Paso 4 — Genera el currículum
 
 Ve a la pestaña **Generar**, pega la descripción completa de la oferta y haz clic en **Generar currículum**.
 
@@ -182,7 +161,7 @@ Después de generar, descarga el archivo y revísalo antes de enviarlo.
 
 ---
 
-### Paso 6 — Accede a tu historial
+### Paso 5 — Accede a tu historial
 
 En la pestaña **Historial** encontrarás todos los currículums generados anteriormente para descargarlos de nuevo.
 
