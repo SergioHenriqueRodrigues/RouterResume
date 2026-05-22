@@ -14,6 +14,7 @@ from generate import (
     OUTPUT_DIR,
 )
 from db.generations import save_generation
+from ui.auth import _queue_toast
 
 
 def _build_old_resumes_text_from_cache() -> str:
@@ -179,7 +180,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                             saved_paths=saved_paths,
                         )
                     except Exception:
-                        pass  # don't break the UI if cloud save fails
+                        _queue_toast(T["error_save"], "warning")
 
                 st.rerun()
 
