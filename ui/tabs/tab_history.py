@@ -35,12 +35,15 @@ def _render_cloud_history(T: dict) -> None:
     user = st.session_state["user"]
     confirming_id = st.session_state.pop("_confirm_del_id", None)
 
-    try:
-        rows = get_generations(user.id)
-    except Exception:
-        _queue_toast(T["error_load"], "error")
-        _flush_toast()
-        return
+    if "history_rows" not in st.session_state:
+        try:
+            st.session_state["history_rows"] = get_generations(user.id)
+        except Exception:
+            _queue_toast(T["error_load"], "error")
+            _flush_toast()
+            return
+
+    rows = st.session_state["history_rows"]
 
     if not rows:
         st.info(T["history_empty"])
@@ -55,13 +58,13 @@ def _render_cloud_history(T: dict) -> None:
 
     if search:
         q = search.lower()
-        rows = [r for r in rows if q in (r.get("filename") or "").lower()]
-        rows_to_show = rows
+        rows_to_show = [r for r in rows if q in (r.get("filename") or "").lower()]
+        total = len(rows_to_show)
     else:
         page = st.session_state.get("history_cloud_page", 1)
         rows_to_show = rows[:page * _PAGE_SIZE]
+        total = len(rows)
 
-    total = len(rows)
     if not total:
         st.info(T["history_empty"])
         return
@@ -88,6 +91,9 @@ def _render_cloud_history(T: dict) -> None:
                     if st.button(T["history_confirm_yes"], key=f"conf_yes_{gen_id}", type="primary", use_container_width=True):
                         try:
                             delete_generation(gen_id)
+                            st.session_state["history_rows"] = [
+                                r for r in st.session_state["history_rows"] if r["id"] != gen_id
+                            ]
                         except Exception:
                             _queue_toast(T["error_delete"], "error")
                         st.rerun(scope="fragment")
@@ -146,6 +152,7 @@ def _render_cloud_history(T: dict) -> None:
                 st.rerun(scope="fragment")
 
 
+@st.fragment
 def _render_local_history(T: dict) -> None:
     if not OUTPUT_DIR.exists():
         st.info(T["history_empty"])
@@ -201,11 +208,11 @@ def _render_local_history(T: dict) -> None:
                             except Exception:
                                 _queue_toast(T["error_delete"], "error")
                         st.session_state.pop("_confirm_del_stem", None)
-                        st.rerun()
+                        st.rerun(scope="fragment")
                 with c2:
                     if st.button(T["history_confirm_no"], key=f"conf_no_{stem}", use_container_width=True):
                         st.session_state.pop("_confirm_del_stem", None)
-                        st.rerun()
+                        st.rerun(scope="fragment")
         else:
             if render_file_card(
                 display_name=name,
@@ -215,7 +222,7 @@ def _render_local_history(T: dict) -> None:
                 delete_help=T["history_delete_help"],
             ):
                 st.session_state["_confirm_del_stem"] = stem
-                st.rerun()
+                st.rerun(scope="fragment")
 
     if not search and total > _PAGE_SIZE:
         shown = len(items_to_show)
@@ -224,7 +231,7 @@ def _render_local_history(T: dict) -> None:
             remaining = total - shown
             if st.button(T["history_load_more"].format(n=remaining), use_container_width=True):
                 st.session_state["history_local_page"] = page + 1
-                st.rerun()
+                st.rerun(scope="fragment")
 
 
 def render_tab_history(T: dict) -> None:

@@ -86,8 +86,7 @@ def _render_cloud_resumes(T: dict) -> None:
             ]
         except Exception:
             _queue_toast(T["error_delete"], "error")
-        st.session_state["_nav_tab"] = 3
-        st.rerun()
+        st.rerun(scope="fragment")
 
 
 @st.fragment

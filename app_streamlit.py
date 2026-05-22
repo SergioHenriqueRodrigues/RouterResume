@@ -158,14 +158,24 @@ lang, fmt, model, api_key, T = render_sidebar()
 _nav_tab = st.session_state.pop("_nav_tab", None)
 if _nav_tab is not None:
     components.html(
-        f"<script>(function(){{"
-        f"var idx={_nav_tab},tries=0;"
-        f"function click(){{"
-        f"var t=window.parent.document.querySelectorAll('[data-baseweb=\"tab\"]');"
-        f"if(t[idx]){{t[idx].click();return;}}"
-        f"if(++tries<40)requestAnimationFrame(click);}}"
-        f"requestAnimationFrame(click);"
-        f"}})();</script>",
+        f"""<script>(function(){{
+        var pd=window.parent.document;
+        var wrap=pd.querySelector('[data-testid="stTabs"]');
+        if(wrap){{wrap.style.opacity='0';wrap.style.transition='none';}}
+        var idx={_nav_tab},tries=0;
+        function go(){{
+          var t=pd.querySelectorAll('[data-baseweb="tab"]');
+          if(t[idx]){{
+            t[idx].click();
+            requestAnimationFrame(function(){{
+              if(wrap){{wrap.style.transition='opacity 0.15s';wrap.style.opacity='1';}}
+            }});
+            return;
+          }}
+          if(++tries<40)requestAnimationFrame(go);
+        }}
+        requestAnimationFrame(go);
+        }})();</script>""",
         height=0,
     )
 

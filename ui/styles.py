@@ -174,6 +174,14 @@ GLOBAL_CSS = """
   [data-testid="stVerticalBlockBorderWrapper"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:last-child button:hover {
     background: #B91C1C !important;
   }
+
+  [data-baseweb="tab-panel"] {
+    animation: rr-fadein 0.12s ease;
+  }
+  @keyframes rr-fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
 </style>
 """
 

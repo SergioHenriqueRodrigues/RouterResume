@@ -9,7 +9,7 @@ from db.reference_resumes import get_reference_resumes
 
 _USER_KEYS = [
     "user", "access_token", "refresh_token",
-    "profile_data", "ref_resumes",
+    "profile_data", "ref_resumes", "history_rows",
     "api_key", "model",
     "saved_paths", "resume_text",
     "generation_error", "sidebar_test_result",
@@ -126,6 +126,21 @@ _FORM_JS = """
     s.textContent = '[data-testid="InputInstructions"] { display: none !important; }';
     pd.head.appendChild(s);
   }
+  var tabTries=0;
+  function fadeInTabs(){
+    var wrap=pd.querySelector('[data-testid="stTabs"]');
+    if(wrap){
+      wrap.style.opacity='0';
+      wrap.style.transition='none';
+      requestAnimationFrame(function(){
+        wrap.style.transition='opacity 0.15s';
+        wrap.style.opacity='1';
+      });
+      return;
+    }
+    if(++tabTries<40)requestAnimationFrame(fadeInTabs);
+  }
+  requestAnimationFrame(fadeInTabs);
   function setup() {
     pd.querySelectorAll('[data-testid="stForm"]').forEach(function(form) {
       var inputs = Array.from(form.querySelectorAll('input'));
