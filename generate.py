@@ -110,6 +110,13 @@ def _read_docx(path):
     doc = Document(str(path))
     return "\n".join(p.text for p in doc.paragraphs)
 
+def sanitize_filename(name: str) -> str:
+    import re
+    from pathlib import Path as _Path
+    name = _Path(name).name
+    name = re.sub(r"[^\w.\-]", "_", name)
+    return name or "file"
+
 # ── integrity rules (hardcoded — not user-editable) ───────────────────────────
 
 _INTEGRITY_RULES = """
