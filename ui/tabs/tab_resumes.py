@@ -22,6 +22,7 @@ _MIME = {
 
 def _render_cloud_resumes(T: dict) -> None:
     resumes = st.session_state.get("ref_resumes", [])
+    deleting_id = st.session_state.pop("_deleting_ref_id", None)
 
     if not resumes:
         st.info(T["no_resumes"])
@@ -33,39 +34,60 @@ def _render_cloud_resumes(T: dict) -> None:
         size     = r.get("file_size") or 0
         size_str = f"{size / 1024:.1f} KB" if size >= 1024 else f"{size} B"
         ext      = Path(filename).suffix.lower()
+        busy     = (rid == deleting_id)
 
         with st.container(border=True):
             col_info, col_dl, col_del = st.columns([5, 2, 1])
             with col_info:
                 st.markdown(
-                    f'<p style="margin:0;line-height:1.35">'
+                    f'<p style="margin:0;line-height:1.35;{"opacity:.4" if busy else ""}">'
                     f'<span class="file-name">{filename}</span>'
                     f'<span class="file-size" style="margin-left:6px">· {size_str}</span>'
                     f'</p>',
                     unsafe_allow_html=True,
                 )
             with col_dl:
-                raw = get_reference_resume_bytes(rid)
-                if raw:
+                if not busy:
+                    raw = get_reference_resume_bytes(rid)
+                    if raw:
+                        st.download_button(
+                            label=ext.upper().lstrip("."),
+                            data=raw,
+                            file_name=filename,
+                            mime=_MIME.get(ext, "application/octet-stream"),
+                            use_container_width=True,
+                            key=f"dl_ref_{rid}",
+                        )
+                else:
                     st.download_button(
-                        label=ext.upper().lstrip("."),
-                        data=raw,
+                        label="...",
+                        data=b"",
                         file_name=filename,
-                        mime=_MIME.get(ext, "application/octet-stream"),
                         use_container_width=True,
+                        disabled=True,
                         key=f"dl_ref_{rid}",
                     )
             with col_del:
-                if st.button("", key=f"del_ref_{rid}", icon=":material/delete:", help=T["history_delete_help"]):
-                    try:
-                        delete_reference_resume(rid)
-                        st.session_state["ref_resumes"] = [
-                            x for x in st.session_state.get("ref_resumes", []) if x["id"] != rid
-                        ]
-                    except Exception:
-                        _queue_toast(T["error_delete"], "error")
-                    st.session_state["_nav_tab"] = 3
-                    st.rerun()
+                if st.button(
+                    "",
+                    key=f"del_ref_{rid}",
+                    icon=":material/delete:",
+                    help=T["history_delete_help"],
+                    disabled=busy,
+                ):
+                    st.session_state["_deleting_ref_id"] = rid
+                    st.rerun(scope="fragment")
+
+    if deleting_id:
+        try:
+            delete_reference_resume(deleting_id)
+            st.session_state["ref_resumes"] = [
+                x for x in resumes if x["id"] != deleting_id
+            ]
+        except Exception:
+            _queue_toast(T["error_delete"], "error")
+        st.session_state["_nav_tab"] = 3
+        st.rerun()
 
 
 @st.fragment
