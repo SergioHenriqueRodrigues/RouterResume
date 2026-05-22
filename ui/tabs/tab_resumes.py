@@ -1,8 +1,7 @@
-import re
 import streamlit as st
 from pathlib import Path
 
-from generate import OLD_RESUMES_DIR
+from generate import OLD_RESUMES_DIR, sanitize_filename
 from ui.components import render_file_card
 from ui.auth import _queue_toast, _flush_toast
 from db.reference_resumes import (
@@ -19,12 +18,6 @@ _MIME = {
     ".txt":  "text/plain",
     ".md":   "text/markdown",
 }
-
-
-def _sanitize_filename(name: str) -> str:
-    name = Path(name).name
-    name = re.sub(r"[^\w.\-]", "_", name)
-    return name or "file"
 
 
 def _render_cloud_resumes(T: dict) -> None:
@@ -149,7 +142,7 @@ def render_tab_resumes(T: dict) -> None:
                     name=f.name, size=size_mb, limit=MAX_UPLOAD_MB
                 ), "warning")
                 continue
-            safe_name = _sanitize_filename(f.name)
+            safe_name = sanitize_filename(f.name)
             content = f.read()
             try:
                 if user:
