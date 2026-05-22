@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from generate import OLD_RESUMES_DIR, OUTPUT_DIR, clean_old_cache
+from generate import OLD_RESUMES_DIR, OUTPUT_DIR, maybe_clean_cache
 from ui.styles import inject_styles
 from ui.sidebar import render_sidebar
 from ui.tabs.tab_generate import render_tab_generate
@@ -50,10 +50,8 @@ _HASH_TO_QUERY_JS = """
 OLD_RESUMES_DIR.mkdir(exist_ok=True)
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-# ── cache cleanup (once per session) ──────────────────────────────────────────
-if "cache_cleaned" not in st.session_state:
-    clean_old_cache(max_age_days=7)
-    st.session_state["cache_cleaned"] = True
+# ── cache cleanup (at most once per day) ──────────────────────────────────────
+maybe_clean_cache()
 
 # ── session state defaults ─────────────────────────────────────────────────────
 st.session_state.setdefault("ui_lang", "pt")

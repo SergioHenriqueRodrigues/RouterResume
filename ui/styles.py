@@ -132,8 +132,8 @@ GLOBAL_CSS = """
   [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { gap: 0px !important; }
   [data-testid="stSidebar"] .block-container { gap: 0px !important; }
 
-  [data-testid="stSidebar"] [data-testid="InputInstructions"],
-  [data-testid="stSidebar"] [data-testid="stTextInput"] small { display: none !important; }
+  [data-testid="InputInstructions"],
+  [data-testid="stTextInput"] small { display: none !important; }
 
   .model-hint { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
   [data-testid="stSidebar"] .stMarkdown:has(.model-hint) { margin-top: -14px !important; margin-bottom: 16px !important; }
