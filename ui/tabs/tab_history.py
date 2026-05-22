@@ -6,6 +6,7 @@ import streamlit as st
 
 from generate import OUTPUT_DIR
 from ui.components import render_file_card
+from ui.auth import _queue_toast, _flush_toast
 from db.generations import get_generations, get_generation_files, delete_generation
 
 _ALLOWED = {".pdf", ".docx"}
@@ -27,9 +28,17 @@ def _parse_stem(stem: str) -> tuple[str, str]:
     return stem, ""
 
 
+@st.fragment
 def _render_cloud_history(T: dict) -> None:
+    _flush_toast()
     user = st.session_state["user"]
-    rows = get_generations(user.id)
+
+    try:
+        rows = get_generations(user.id)
+    except Exception:
+        _queue_toast(T["error_load"], "error")
+        _flush_toast()
+        return
 
     if not rows:
         st.info(T["history_empty"])
@@ -62,7 +71,11 @@ def _render_cloud_history(T: dict) -> None:
                 )
 
             with col_dl:
-                files_data = get_generation_files(gen_id)
+                try:
+                    files_data = get_generation_files(gen_id)
+                except Exception:
+                    files_data = {}
+
                 btns = []
                 if files_data.get("file_docx"):
                     btns.append(("DOCX", base64.b64decode(files_data["file_docx"]), "docx"))
@@ -84,8 +97,11 @@ def _render_cloud_history(T: dict) -> None:
 
             with col_del:
                 if st.button("", key=f"del_{gen_id}", icon=":material/delete:", help=T["history_delete_help"]):
-                    delete_generation(gen_id)
-                    st.rerun()
+                    try:
+                        delete_generation(gen_id)
+                    except Exception:
+                        _queue_toast(T["error_delete"], "error")
+                    st.rerun(scope="fragment")
 
 
 def _render_local_history(T: dict) -> None:
@@ -116,8 +132,11 @@ def _render_local_history(T: dict) -> None:
             delete_help=T["history_delete_help"],
         ):
             for f in group_files:
-                if f.exists():
-                    f.unlink()
+                try:
+                    if f.exists():
+                        f.unlink()
+                except Exception:
+                    _queue_toast(T["error_delete"], "error")
             st.rerun()
 
 
