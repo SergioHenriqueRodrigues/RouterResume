@@ -113,6 +113,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
             st.write(T["status_resumes"].format(n=n_resumes))
 
             try:
+                st.write(T["status_building"])
                 prompt = build_prompt(raw_data, old_resumes_text, job_text, lang)
                 start  = time.time()
 
@@ -155,6 +156,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                 ts        = datetime.datetime.now().strftime("%Y%m%d_%H%M")
                 base_name = f"{ai_slug or 'resume'}_{ts}"
 
+                st.write(T["status_saving_files"].format(fmt=fmt.upper()))
                 saved_paths = []
                 if fmt in ("docx", "all"):
                     p = save_docx(resume, base_name, lang)
@@ -165,11 +167,8 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                     if p:
                         saved_paths.append(p)
 
-                st.session_state["is_generating"] = False
-                st.session_state["resume_text"]   = resume
-                st.session_state["saved_paths"]   = saved_paths
-
                 if user and saved_paths:
+                    st.write(T["status_saving_cloud"])
                     try:
                         save_generation(
                             user_id=user.id,
@@ -182,9 +181,14 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                     except Exception:
                         _queue_toast(T["error_save"], "warning")
 
+                status.update(label=T["status_title_ok"], state="complete")
+                st.session_state["is_generating"] = False
+                st.session_state["resume_text"]   = resume
+                st.session_state["saved_paths"]   = saved_paths
                 st.rerun()
 
             except Exception as e:
+                status.update(label=T["status_title_fail"], state="error")
                 st.session_state["is_generating"] = False
                 st.session_state["generation_error"] = f"{T['error_prefix']}{e}"
                 st.rerun()
