@@ -287,6 +287,18 @@ def _cache_set(key: str, response: str) -> None:
         encoding="utf-8",
     )
 
+def clean_old_cache(max_age_days: int = 7) -> int:
+    cutoff = datetime.datetime.now() - datetime.timedelta(days=max_age_days)
+    removed = 0
+    for f in CACHE_DIR.glob("*.json"):
+        try:
+            if datetime.datetime.fromtimestamp(f.stat().st_mtime) < cutoff:
+                f.unlink()
+                removed += 1
+        except Exception:
+            pass
+    return removed
+
 # ── API ────────────────────────────────────────────────────────────────────────
 
 def call_model(prompt, model):
