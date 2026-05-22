@@ -178,6 +178,7 @@ def render_tab_generate(lang: str, fmt: str, model: str, api_key: str, T: dict) 
                             filename=base_name,
                             saved_paths=saved_paths,
                         )
+                        st.session_state.pop("history_rows", None)
                     except Exception:
                         _queue_toast(T["error_save"], "warning")
 

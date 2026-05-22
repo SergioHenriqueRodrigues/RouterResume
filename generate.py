@@ -287,6 +287,38 @@ def _cache_set(key: str, response: str) -> None:
         encoding="utf-8",
     )
 
+def clean_old_cache(max_age_days: int = 7) -> int:
+    cutoff = datetime.datetime.now() - datetime.timedelta(days=max_age_days)
+    removed = 0
+    for f in CACHE_DIR.glob("*.json"):
+        try:
+            if datetime.datetime.fromtimestamp(f.stat().st_mtime) < cutoff:
+                f.unlink()
+                removed += 1
+        except Exception:
+            pass
+    return removed
+
+_CACHE_CLEAN_FLAG = CACHE_DIR / ".last_clean"
+
+def maybe_clean_cache(max_age_days: int = 7) -> bool:
+    """Runs clean_old_cache at most once per day. Returns True if cleaning ran."""
+    if _CACHE_CLEAN_FLAG.exists():
+        try:
+            elapsed = (datetime.datetime.now() - datetime.datetime.fromtimestamp(
+                _CACHE_CLEAN_FLAG.stat().st_mtime
+            )).total_seconds()
+            if elapsed < 86400:
+                return False
+        except Exception:
+            pass
+    clean_old_cache(max_age_days)
+    try:
+        _CACHE_CLEAN_FLAG.touch()
+    except Exception:
+        pass
+    return True
+
 # ── API ────────────────────────────────────────────────────────────────────────
 
 def call_model(prompt, model):
